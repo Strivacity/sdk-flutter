@@ -1,0 +1,35 @@
+version: 2
+
+updates:
+  - package-ecosystem: pub
+    directory: strivacity_flutter
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    labels:
+      - ignore title check
+      - dependencies
+
+  - package-ecosystem: pub
+    directory: strivacity_flutter/example
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    labels:
+      - ignore title check
+      - dependencies
+
+  - package-ecosystem: pub
+    directory: strivacity_flutter_platform_interface
+    schedule:
+      interval: daily
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    labels:
+      - ignore title check
+      - dependencies
