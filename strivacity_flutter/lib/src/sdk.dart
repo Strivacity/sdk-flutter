@@ -156,16 +156,16 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
         await _httpClient.sendTokenRequest('${tenantConfiguration.issuer}/oauth2/revoke', (RequestOptions options) {
           options.data = {
             'client_id': tenantConfiguration.clientId,
-            'grant_type': 'refresh_token',
-            'refresh_token': session!.refreshToken,
+            'token_type_hint': 'refresh_token',
+            'token': session!.refreshToken,
           };
         });
       } else if (session!.accessToken != null && session!.accessToken!.isNotEmpty) {
         await _httpClient.sendTokenRequest('${tenantConfiguration.issuer}/oauth2/revoke', (RequestOptions options) {
           options.data = {
             'client_id': tenantConfiguration.clientId,
-            'grant_type': 'access_token',
-            'refresh_token': session!.accessToken,
+            'token_type_hint': 'access_token',
+            'token': session!.accessToken,
           };
         });
       }
