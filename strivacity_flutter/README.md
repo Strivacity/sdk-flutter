@@ -4,11 +4,11 @@
 
 This SDK allows you to integrate Strivacity’s policy-driven journeys into your brand’s Flutter application. The SDK uses the OAuth 2.0 PKCE flow to authenticate with Strivacity.
 
-See our [Developer Portal](https://www.strivacity.com/learn-support/developer-hub) to get started with developing with the Strivacity product.
+See our [Developer Portal](https://www.strivacity.com/learn-support/developer-hub) to get started with developing the Strivacity product.
 
 ## Example app
 
-See our [example app](./example/README.md) for a comprehensive demonstration of how to integrate and use the Strivacity Flutter SDK in your own projects.
+See our [example app](https://github.com/Strivacity/sdk-flutter/blob/main/strivacity_flutter/example/README.md) for a comprehensive demonstration of how to integrate and use the Strivacity Flutter SDK in your own projects.
 
 ## How to include in your project
 
@@ -233,4 +233,4 @@ The `LoginRenderer` widget is responsible for rendering the login UI using the p
 
 ## Contributing
 
-Please see our [contributing guide](./CONTRIBUTING.md).
+Please see our [contributing guide](https://github.com/Strivacity/sdk-flutter/blob/main/strivacity_flutter/CONTRIBUTING.md).
