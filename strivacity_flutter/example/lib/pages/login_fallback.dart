@@ -51,8 +51,10 @@ class _LoginFallbackPageState extends State<LoginFallbackPage> {
             }
 
             return NavigationDecision.prevent;
-          } else {
+          } else if (request.url.startsWith(widget.sdk.tenantConfiguration.issuer.toString())) {
             return NavigationDecision.navigate;
+          } else {
+            return NavigationDecision.prevent;
           }
         },
       ),
