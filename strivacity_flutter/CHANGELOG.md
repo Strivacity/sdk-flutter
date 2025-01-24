@@ -1,3 +1,9 @@
+## 1.0.4 (2025-01-24)
+
+### Fixes
+
+- fix: example app link fixed
+
 ## 1.0.3 (2025-01-24)
 
 ### Fixes
