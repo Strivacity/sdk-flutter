@@ -8,6 +8,7 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "strivacity_flutter_platform_interface"
     labels:
       - ignore title check
       - dependencies
@@ -19,6 +20,8 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "strivacity_flutter"
+      - dependency-name: "strivacity_flutter_platform_interface"
     labels:
       - ignore title check
       - dependencies
