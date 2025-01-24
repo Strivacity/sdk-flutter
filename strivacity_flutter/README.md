@@ -55,7 +55,7 @@ class KeychainStorage extends SDKStorage {
 
 #### Create your view factory and widget classes
 
-To customize the UI components used in the authentication flows, implement the `ViewFactory` interface. Example implementations for various widgets can be found in the [example app](https://github.com/strivacity/strivacity-flutter-example):
+To customize the UI components used in the authentication flows, implement the `ViewFactory` interface. Example implementations for various widgets can be found in the [example app](https://github.com/Strivacity/sdk-flutter/blob/main/strivacity_flutter/example/README.md):
 
 ```dart
 import 'package:flutter/material.dart';
