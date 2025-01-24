@@ -1,6 +1,6 @@
 name: strivacity_flutter_platform_interface
 description: "Strivacity Flutter SDK platform interface"
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Strivacity/sdk-flutter
 
 environment:

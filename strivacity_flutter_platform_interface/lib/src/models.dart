@@ -40,7 +40,7 @@ class CheckboxWidgetModel extends BaseWidgetModel {
   final String? label;
   final bool readonly;
   final bool? value;
-  final BaseWidgetRender render;
+  final CheckboxWidgetRender render;
   final BaseWidgetValidator? validator;
 
   CheckboxWidgetModel({
@@ -58,7 +58,7 @@ class CheckboxWidgetModel extends BaseWidgetModel {
       label: json['label'],
       readonly: json['readonly'],
       value: json['value'],
-      render: BaseWidgetRender.fromJson(json['render']),
+      render: CheckboxWidgetRender.fromJson(json['render']),
       validator: json['validator'] != null ? BaseWidgetValidator.fromJson(json['validator']) : null,
     );
   }
@@ -423,6 +423,17 @@ class BaseWidgetRender {
 
   factory BaseWidgetRender.fromJson(Map<String, dynamic> json) {
     return BaseWidgetRender(type: json['type']);
+  }
+}
+
+class CheckboxWidgetRender {
+  final String type;
+  final String labelType;
+
+  CheckboxWidgetRender({required this.type, required this.labelType});
+
+  factory CheckboxWidgetRender.fromJson(Map<String, dynamic> json) {
+    return CheckboxWidgetRender(type: json['type'], labelType: json['labelType']);
   }
 }
 
