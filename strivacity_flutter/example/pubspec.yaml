@@ -19,6 +19,10 @@ dependencies:
   url_launcher: ^6.3.1
   flutter_dotenv: ^5.2.1
 
+dependency_overrides:
+  strivacity_flutter_platform_interface:
+    path: ../../strivacity_flutter_platform_interface
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

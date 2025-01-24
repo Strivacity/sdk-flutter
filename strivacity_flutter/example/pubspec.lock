@@ -363,15 +363,14 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.0"
+    version: "1.0.3"
   strivacity_flutter_platform_interface:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: strivacity_flutter_platform_interface
-      sha256: "508bdc93c359f0627b8fd3afa7c0020b0a82638f8b7915546bbe0741e55a4b61"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
+      path: "../../strivacity_flutter_platform_interface"
+      relative: true
+    source: path
+    version: "1.0.1"
   term_glyph:
     dependency: transitive
     description:
