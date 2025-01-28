@@ -1,3 +1,20 @@
+## 1.1.0 (2025-01-29)
+
+### Features
+
+- submit widget hints added
+- option added to continue the current session
+
+### Chores
+
+- fix: access token expiration handling fixed
+- fallback handling updated in the example app
+- use debugPrint to print debug information
+
+### Fixes
+
+- handle missing widget or form correctly
+
 ## 1.0.4 (2025-01-24)
 
 ### Fixes
