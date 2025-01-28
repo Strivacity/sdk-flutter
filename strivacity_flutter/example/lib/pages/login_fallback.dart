@@ -1,10 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
 
 class LoginFallbackPage extends StatefulWidget {
@@ -17,90 +12,37 @@ class LoginFallbackPage extends StatefulWidget {
 }
 
 class _LoginFallbackPageState extends State<LoginFallbackPage> {
-  late WebViewController webViewController;
-  bool _hasNavigated = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    webViewController = WebViewController();
-  }
-
   @override
   void didChangeDependencies() {
-    Map? arguments = ModalRoute.of(context)!.settings.arguments as Map?;
-
-    if (arguments == null || arguments['url'] == null) {
-      return _onError('Missing fallback URL');
-    }
-
-    webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    webViewController.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (NavigationRequest request) async {
-          if (_hasNavigated) {
-            return NavigationDecision.prevent;
-          } else if (request.url.startsWith(widget.sdk.tenantConfiguration.redirectUri.toString())) {
-            try {
-              _hasNavigated = true;
-
-              _onLogin(Uri.parse(request.url).queryParameters);
-            } catch (e, stackTrace) {
-              _onError(e, stackTrace);
-            }
-
-            return NavigationDecision.prevent;
-          } else if (request.url.startsWith(widget.sdk.tenantConfiguration.issuer.toString())) {
-            return NavigationDecision.navigate;
-          } else {
-            return NavigationDecision.prevent;
-          }
-        },
-      ),
-    );
-    webViewController.loadRequest(Uri.parse(arguments['url'] as String));
-
     super.didChangeDependencies();
+
+    _launchFallback();
   }
 
-  Future<void> _onLogin(Map<String, String> queryParameters) async {
+  _launchFallback() async {
     try {
-      await widget.sdk.tokenExchange(queryParameters);
+      Map? arguments = ModalRoute.of(context)!.settings.arguments as Map?;
 
-      if (await widget.sdk.isAuthenticated) {
-        if (context.mounted) {
-          Navigator.of(context).pushReplacementNamed('/profile');
-        }
-      } else {
-        if (context.mounted) {
-          Navigator.of(context).pushReplacementNamed('/init');
-        }
+      if (arguments == null || arguments['url'] == null) {
+        throw Exception('Missing fallback URL');
       }
+
+      await launchUrl(
+        Uri.parse(arguments['url'] as String),
+        prefersDeepLink: true,
+        customTabsOptions: CustomTabsOptions(
+          shareState: CustomTabsShareState.off,
+          urlBarHidingEnabled: false,
+          showTitle: false,
+        ),
+        safariVCOptions: SafariViewControllerOptions(
+          barCollapsingEnabled: false,
+          entersReaderIfAvailable: false,
+        ),
+      );
     } catch (e) {
-      // Session timeout
-      if (context.mounted) {
-        Navigator.of(context).pushReplacementNamed('/init');
-      }
+      debugPrint(e.toString());
     }
-  }
-
-  void _onError(dynamic e, [dynamic stackTrace]) {
-    log(e);
-    log(stackTrace);
-    _showErrorToast(e.toString());
-  }
-
-  void _showErrorToast(String msg) {
-    Fluttertoast.showToast(
-      msg: msg,
-      toastLength: Toast.LENGTH_LONG,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 5,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
   }
 
   @override
@@ -108,13 +50,7 @@ class _LoginFallbackPageState extends State<LoginFallbackPage> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        body: WebViewWidget(controller: webViewController),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed('/init');
-          },
-          child: Icon(Icons.close),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       ),
     );
   }

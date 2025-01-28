@@ -45,5 +45,20 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.example.example</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sty</string> <!-- Replace 'sty' with your redirect uri scheme -->
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
