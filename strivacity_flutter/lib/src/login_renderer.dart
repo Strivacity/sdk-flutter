@@ -178,8 +178,8 @@ class _LoginRendererState extends State<LoginRenderer> {
     } on FallbackError catch (e) {
       _onFallback(e);
     } catch (e, stackTrace) {
-      print(e);
-      print(stackTrace);
+      debugPrint(e.toString());
+      debugPrint(stackTrace.toString());
       _onError(e, stackTrace);
     }
   }
@@ -204,7 +204,7 @@ class _LoginRendererState extends State<LoginRenderer> {
         final w = f?.widgets.firstWhere((widget) => widget.id == item['widgetId']) as BaseWidgetModel?;
 
         if (f == null || w == null) {
-          print('Form or widget not found');
+          debugPrint('Form or widget not found');
           _triggerFallback(_loginContext.state.hostedUrl!);
           return Text('');
         }
@@ -235,14 +235,14 @@ class _LoginRendererState extends State<LoginRenderer> {
           case 'static':
             return widget.viewFactory.getStaticWidget(key: Key('${f.id}|${w.id}'), config: w as StaticWidgetModel);
           default:
-            print('Unknown widget type: ${w.type}');
+            debugPrint('Unknown widget type: ${w.type}');
             _triggerFallback(_loginContext.state.hostedUrl!);
             return Text('');
         }
       } else if (item['type'] == 'vertical' || item['type'] == 'horizontal') {
         return widget.viewFactory.getLayoutWidget(key: UniqueKey(), type: item['type'], children: _renderComponents(item['items']));
       } else {
-        print('Unknown item type: ${item['type']}');
+        debugPrint('Unknown item type: ${item['type']}');
         _triggerFallback(_loginContext.state.hostedUrl!);
         return Text('');
       }

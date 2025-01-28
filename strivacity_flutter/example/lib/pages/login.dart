@@ -50,8 +50,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onError(BuildContext context, dynamic e, dynamic stackTrace) {
-    print(e);
-    print(stackTrace);
+    debugPrint(e);
+    debugPrint(stackTrace);
     _showErrorToast(e.toString());
   }
 

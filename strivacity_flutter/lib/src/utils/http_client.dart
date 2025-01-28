@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
@@ -17,24 +17,24 @@ class HttpClient {
     dio.interceptors.add(CookieManager(cookieJar));
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        log('##### REQUEST #####');
-        log('URL: [${options.method}] ${options.uri}');
-        log('HEADERS: [${options.headers}]');
-        log('DATA: ${options.data}');
+        debugPrint('##### REQUEST #####');
+        debugPrint('URL: [${options.method}] ${options.uri}');
+        debugPrint('HEADERS: [${options.headers}]');
+        debugPrint('DATA: ${options.data}');
         return handler.next(options);
       },
       onResponse: (response, handler) async {
-        log('##### RESPONSE #####');
-        log('URL: [${response.requestOptions.method}] ${response.requestOptions.uri}');
-        log('HEADERS: [${response.headers}]');
-        log('DATA: ${response.data}');
+        debugPrint('##### RESPONSE #####');
+        debugPrint('URL: [${response.requestOptions.method}] ${response.requestOptions.uri}');
+        debugPrint('HEADERS: [${response.headers}]');
+        debugPrint('DATA: ${response.data}');
         return handler.next(response);
       },
       onError: (DioException e, handler) async {
-        log('##### RESPONSE WITH ERROR [${e.response?.statusCode}] #####');
-        log('URL: [${e.requestOptions.method}] ${e.requestOptions.uri}');
-        log('HEADERS: [${e.response?.headers}]');
-        log('DATA: ${e.response?.data}');
+        debugPrint('##### RESPONSE WITH ERROR [${e.response?.statusCode}] #####');
+        debugPrint('URL: [${e.requestOptions.method}] ${e.requestOptions.uri}');
+        debugPrint('HEADERS: [${e.response?.headers}]');
+        debugPrint('DATA: ${e.response?.data}');
         return handler.next(e);
       },
     ));
