@@ -1,3 +1,9 @@
+## 1.1.1 (2025-01-29)
+
+### Chores
+
+- minor fallback screen tweaks
+
 ## 1.1.0 (2025-01-29)
 
 ### Features
@@ -7,7 +13,7 @@
 
 ### Chores
 
-- fix: access token expiration handling fixed
+- access token expiration handling fixed
 - fallback handling updated in the example app
 - use debugPrint to print debug information
 
@@ -19,26 +25,26 @@
 
 ### Fixes
 
-- fix: example app link fixed
+- example app link fixed
 
 ## 1.0.3 (2025-01-24)
 
 ### Fixes
 
-- fix: add missing labelType for CheckboxWidget
+- add missing labelType for CheckboxWidget
 
 ## 1.0.2 (2025-01-23)
 
 ### Fixes
 
-- fix: check issuer domain during fallback redirection
-- fix: revoke request options fixed
+- check issuer domain during fallback redirection
+- revoke request options fixed
 
 ## 1.0.1 (2025-01-23)
 
 ### Fixes
 
-- fix: README links fixed
+- README links fixed
 
 ## 1.0.0 (2025-01-22)
 

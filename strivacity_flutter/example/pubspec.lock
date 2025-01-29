@@ -443,7 +443,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.1.0"
+    version: "1.1.1"
   strivacity_flutter_platform_interface:
     dependency: "direct overridden"
     description:
