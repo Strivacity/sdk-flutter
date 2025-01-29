@@ -70,14 +70,18 @@ class _MyAppState extends State<MyApp> {
         } else {
           try {
             await sdk.tokenExchange(uri.queryParameters);
+
+            if (await sdk.isAuthenticated) {
+              final currentRoute = ModalRoute.of(_nav.currentContext!)?.settings.name;
+
+              if (currentRoute != '/profile') {
+                _nav.currentState!.pushReplacementNamed('/profile');
+              }
+            } else {
+              _nav.currentState!.pushReplacementNamed('/init');
+            }
           } on OIDCError catch (e) {
             _showErrorToast(e.toString());
-          }
-
-          if (await sdk.isAuthenticated) {
-            _nav.currentState!.pushReplacementNamed('/profile');
-          } else {
-            _nav.currentState!.pushReplacementNamed('/init');
           }
         }
       } catch (e) {

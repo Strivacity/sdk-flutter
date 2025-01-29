@@ -51,6 +51,12 @@ class _LoginFallbackPageState extends State<LoginFallbackPage> {
       canPop: false,
       child: Scaffold(
         body: Center(child: CircularProgressIndicator()),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed('/init');
+          },
+          child: Icon(Icons.close),
+        ),
       ),
     );
   }
