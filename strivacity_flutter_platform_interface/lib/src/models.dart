@@ -356,7 +356,7 @@ class StaticWidgetModel extends BaseWidgetModel {
 
 class SubmitWidgetModel extends BaseWidgetModel {
   final String? label;
-  final BaseWidgetRender render;
+  final SubmitWidgetRender render;
 
   SubmitWidgetModel({
     required super.id,
@@ -368,7 +368,7 @@ class SubmitWidgetModel extends BaseWidgetModel {
     return SubmitWidgetModel(
       id: json['id'],
       label: json['label'],
-      render: BaseWidgetRender.fromJson(json['render']),
+      render: SubmitWidgetRender.fromJson(json['render']),
     );
   }
 }
@@ -423,6 +423,42 @@ class BaseWidgetRender {
 
   factory BaseWidgetRender.fromJson(Map<String, dynamic> json) {
     return BaseWidgetRender(type: json['type']);
+  }
+}
+
+class SubmitWidgetRender {
+  final String type;
+  final Color? textColor;
+  final Color? bgColor;
+  final SubmitWidgetHint? hint;
+
+  SubmitWidgetRender({required this.type, required this.textColor, required this.bgColor, required this.hint});
+
+  factory SubmitWidgetRender.fromJson(Map<String, dynamic> json) {
+    return SubmitWidgetRender(
+        type: json['type'],
+        textColor: json['textColor'] != null ? Color(_hexToColor(json['textColor'])) : null,
+        bgColor: json['bgColor'] != null ? Color(_hexToColor(json['bgColor'])) : null,
+        hint: json['hint'] != null ? SubmitWidgetHint.fromJson(json['hint']) : null);
+  }
+
+  static int _hexToColor(String hex) {
+    hex = hex.replaceFirst('#', '');
+    if (hex.length == 6) {
+      hex = 'FF$hex';
+    }
+    return int.parse(hex, radix: 16);
+  }
+}
+
+class SubmitWidgetHint {
+  final String? icon;
+  final String? variant;
+
+  SubmitWidgetHint({required this.icon, required this.variant});
+
+  factory SubmitWidgetHint.fromJson(Map<String, dynamic> json) {
+    return SubmitWidgetHint(icon: json['icon'], variant: json['variant']);
   }
 }
 
