@@ -53,6 +53,9 @@ class LoginRenderer extends StatefulWidget {
   /// Optional OIDC parameters.
   final OidcParams? params;
 
+  /// Optional session ID to continue an existing session.
+  final String? sessionId;
+
   /// The factory for creating view components.
   final ViewFactory viewFactory;
 
@@ -74,6 +77,7 @@ class LoginRenderer extends StatefulWidget {
   const LoginRenderer({
     super.key,
     this.params,
+    this.sessionId,
     this.onLogin,
     this.onError,
     this.onFallback,
@@ -103,7 +107,7 @@ class _LoginRendererState extends State<LoginRenderer> {
 
   Future<void> _init() async {
     try {
-      final data = await _loginHandler.startSession();
+      final data = await _loginHandler.startSession(widget.sessionId);
       final state = LoginFlowState.fromJson(data);
 
       if (await widget.sdk.isAuthenticated) {
