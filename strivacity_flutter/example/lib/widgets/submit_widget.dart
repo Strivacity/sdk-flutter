@@ -32,8 +32,8 @@ class SubmitWidget extends StatelessWidget {
           child: ElevatedButton(
             onPressed: loading ? null : () => onPressed(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Styles.primaryColor,
-              foregroundColor: Styles.whiteColor,
+              backgroundColor: config.render.bgColor ?? (config.render.hint?.variant == 'primary' ? Styles.primaryColor : Styles.whiteColor),
+              foregroundColor: config.render.textColor ?? (config.render.hint?.variant == 'primary' ? Styles.whiteColor : Styles.primaryColor),
               alignment: Alignment.center,
               padding: EdgeInsets.symmetric(vertical: Styles.paddingMedium, horizontal: 0),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Styles.borderRadiusMedium)),

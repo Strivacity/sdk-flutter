@@ -17,19 +17,26 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   OidcParams? _params;
+  String? _sessionId;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (args != null && args['params'] != null) {
-      final params = args['params'] as Map<String, dynamic>;
+
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    if (arguments != null && arguments['params'] != null) {
+      final params = arguments['params'] as Map<String, dynamic>;
       _params = OidcParams(
         prompt: params['prompt'],
         loginHint: params['login_hint'],
         acrValues: params['acr_values']?.cast<String>(),
         scopes: params['scopes']?.cast<String>(),
       );
+    }
+
+    if (arguments != null && arguments['session_id'] != null) {
+      _sessionId = arguments['session_id'] as String;
     }
   }
 
@@ -50,12 +57,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _onError(BuildContext context, dynamic e, dynamic stackTrace) {
-    print(e);
-    print(stackTrace);
+    debugPrint(e.toString());
+    debugPrint(stackTrace.toString());
     _showErrorToast(e.toString());
   }
 
-  void _onFallback(BuildContext context, Uri uri) {
+  void _onFallback(BuildContext context, Uri uri, String? errorMessage) {
+    debugPrint('Fallback error: ${errorMessage ?? 'Unknown'}');
     Navigator.of(context).pushReplacementNamed('/login-fallback', arguments: {'url': uri.toString()});
   }
 
@@ -83,9 +91,10 @@ class _LoginPageState extends State<LoginPage> {
             sdk: widget.sdk,
             viewFactory: CustomViewFactory(),
             params: _params,
+            sessionId: _sessionId,
             onLogin: (_) => _onLogin(context),
             onError: (e, stackTrace) => _onError(context, e, stackTrace),
-            onFallback: (uri) => _onFallback(context, uri),
+            onFallback: (uri, errorMessage) => _onFallback(context, uri, errorMessage),
             onGlobalMessage: _onGlobalMessage,
           ),
         ),

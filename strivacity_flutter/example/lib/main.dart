@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:app_links/app_links.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
 
 import 'styles.dart';
@@ -33,10 +38,75 @@ class _MyAppState extends State<MyApp> {
     ),
     storage: KeychainStorage(),
   );
+  final appLinks = AppLinks();
+
+  final _nav = GlobalKey<NavigatorState>();
+  late StreamSubscription sub;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _watchLinkStream();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    sub.cancel();
+  }
+
+  Future<void> _watchLinkStream() async {
+    sub = appLinks.uriLinkStream.listen((uri) async {
+      try {
+        closeCustomTabs();
+
+        // Clear the navigation stack
+        _nav.currentState!.popUntil((r) => r.isFirst);
+
+        if (uri.queryParameters['session_id'] != null) {
+          _nav.currentState!.pushReplacementNamed('/login', arguments: {'session_id': uri.queryParameters['session_id']});
+        } else {
+          try {
+            await sdk.tokenExchange(uri.queryParameters);
+
+            if (await sdk.isAuthenticated) {
+              final currentRoute = ModalRoute.of(_nav.currentContext!)?.settings.name;
+
+              if (currentRoute != '/profile') {
+                _nav.currentState!.pushReplacementNamed('/profile');
+              }
+            } else {
+              _nav.currentState!.pushReplacementNamed('/init');
+            }
+          } on OIDCError catch (e) {
+            _showErrorToast(e.toString());
+          }
+        }
+      } catch (e) {
+        // Session timeout
+        _nav.currentState!.pushReplacementNamed('/init');
+      }
+    });
+  }
+
+  void _showErrorToast(String msg) {
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: _nav,
       theme: ThemeData(
         scaffoldBackgroundColor: Styles.backgroundColor,
       ),

@@ -1,3 +1,9 @@
+## 1.1.0 (2025-01-29)
+
+### Features
+
+- submit widget hints added
+
 ## 1.0.1 (2025-01-24)
 
 ### Fixes

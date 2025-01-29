@@ -22,7 +22,13 @@ class LoginHandler {
   /// Starts a new session and returns the session data.
   ///
   /// Throws an [OIDCError] if there is an issue starting the session.
-  Future<Map<String, dynamic>> startSession() async {
+  Future<Map<String, dynamic>> startSession(String? sessionId) async {
+    // If a session ID is provided, use it to continue the session.
+    if (sessionId != null) {
+      _sessionId = sessionId;
+      return submitForm();
+    }
+
     _sdk.state = _generateState();
     var uri = _generateAuthorizationUri(_params);
     uri = uri.replace(queryParameters: {

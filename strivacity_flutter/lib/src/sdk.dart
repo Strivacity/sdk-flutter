@@ -35,7 +35,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
 
   /// Checks if the access token is expired.
   bool get accessTokenExpired {
-    return session?.expiration.isBefore(DateTime.now()) ?? true;
+    return session?.accessToken == null || (session?.expiration.isBefore(DateTime.now()) ?? true);
   }
 
   /// Returns the refresh token.
@@ -63,7 +63,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
       }
 
       await Future.delayed(Duration(milliseconds: 10));
-      bool isAuthenticated = session?.accessToken != null || session?.refreshToken != null;
+      bool isAuthenticated = !accessTokenExpired;
       _isAuthenticated = null;
       return isAuthenticated;
     });

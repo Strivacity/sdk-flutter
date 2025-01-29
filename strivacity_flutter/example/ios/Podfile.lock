@@ -1,5 +1,9 @@
 PODS:
+  - app_links (0.0.2):
+    - Flutter
   - Flutter (1.0.0)
+  - flutter_custom_tabs_ios (2.0.0):
+    - Flutter
   - flutter_keychain (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
@@ -16,7 +20,9 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - app_links (from `.symlinks/plugins/app_links/ios`)
   - Flutter (from `Flutter`)
+  - flutter_custom_tabs_ios (from `.symlinks/plugins/flutter_custom_tabs_ios/ios`)
   - flutter_keychain (from `.symlinks/plugins/flutter_keychain/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -28,8 +34,12 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  app_links:
+    :path: ".symlinks/plugins/app_links/ios"
   Flutter:
     :path: Flutter
+  flutter_custom_tabs_ios:
+    :path: ".symlinks/plugins/flutter_custom_tabs_ios/ios"
   flutter_keychain:
     :path: ".symlinks/plugins/flutter_keychain/ios"
   fluttertoast:
@@ -42,7 +52,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
+  app_links: 3da4c36b46cac3bf24eb897f1a6ce80bda109874
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_custom_tabs_ios: dd647919edd75e82ba6b00009eb3460a28c011b8
   flutter_keychain: 082382ca04745cc72ed13aa3598c151bb2eb426b
   fluttertoast: 76fea30fcf04176325f6864c87306927bd7d2038
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564

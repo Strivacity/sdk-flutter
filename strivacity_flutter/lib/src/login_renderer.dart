@@ -53,6 +53,9 @@ class LoginRenderer extends StatefulWidget {
   /// Optional OIDC parameters.
   final OidcParams? params;
 
+  /// Optional session ID to continue an existing session.
+  final String? sessionId;
+
   /// The factory for creating view components.
   final ViewFactory viewFactory;
 
@@ -63,7 +66,7 @@ class LoginRenderer extends StatefulWidget {
   final FutureOr<void> Function(dynamic e, dynamic stackTrace)? onError;
 
   /// Callback function to be called when a fallback is triggered.
-  final FutureOr<void> Function(Uri uri)? onFallback;
+  final FutureOr<void> Function(Uri uri, String? errorMessage)? onFallback;
 
   /// Callback function to be called for global messages.
   final FutureOr<void> Function(String text)? onGlobalMessage;
@@ -74,6 +77,7 @@ class LoginRenderer extends StatefulWidget {
   const LoginRenderer({
     super.key,
     this.params,
+    this.sessionId,
     this.onLogin,
     this.onError,
     this.onFallback,
@@ -103,7 +107,7 @@ class _LoginRendererState extends State<LoginRenderer> {
 
   Future<void> _init() async {
     try {
-      final data = await _loginHandler.startSession();
+      final data = await _loginHandler.startSession(widget.sessionId);
       final state = LoginFlowState.fromJson(data);
 
       if (await widget.sdk.isAuthenticated) {
@@ -178,13 +182,13 @@ class _LoginRendererState extends State<LoginRenderer> {
     } on FallbackError catch (e) {
       _onFallback(e);
     } catch (e, stackTrace) {
-      print(e);
-      print(stackTrace);
+      debugPrint(e.toString());
+      debugPrint(stackTrace.toString());
       _onError(e, stackTrace);
     }
   }
 
-  void _triggerFallback([String? hostedUrl]) {
+  void _triggerFallback([String? hostedUrl, String? message]) {
     hostedUrl ??= _loginContext.state.hostedUrl;
 
     if (hostedUrl == null) {
@@ -194,18 +198,24 @@ class _LoginRendererState extends State<LoginRenderer> {
       throw Exception('No fallback handler provided');
     }
 
-    widget.onFallback?.call(Uri.parse(hostedUrl));
+    widget.onFallback?.call(Uri.parse(hostedUrl), message);
   }
 
   List<Widget> _renderComponents(List<dynamic> items) {
     return items.map<Widget>((item) {
       if (item['type'] == 'widget') {
-        final f = _loginContext.state.forms?.firstWhere((form) => form.id == item['formId']);
-        final w = f?.widgets.firstWhere((widget) => widget.id == item['widgetId']) as BaseWidgetModel?;
+        FormWidgetModel? f;
+        BaseWidgetModel? w;
+
+        try {
+          f = _loginContext.state.forms?.firstWhere((form) => form.id == item['formId']);
+          w = f?.widgets.firstWhere((widget) => widget.id == item['widgetId']) as BaseWidgetModel?;
+        } catch (e) {
+          // Do nothing
+        }
 
         if (f == null || w == null) {
-          print('Form or widget not found');
-          _triggerFallback(_loginContext.state.hostedUrl!);
+          _triggerFallback(_loginContext.state.hostedUrl!, 'Form or widget not found');
           return Text('');
         }
 
@@ -235,15 +245,13 @@ class _LoginRendererState extends State<LoginRenderer> {
           case 'static':
             return widget.viewFactory.getStaticWidget(key: Key('${f.id}|${w.id}'), config: w as StaticWidgetModel);
           default:
-            print('Unknown widget type: ${w.type}');
-            _triggerFallback(_loginContext.state.hostedUrl!);
+            _triggerFallback(_loginContext.state.hostedUrl!, 'Unknown widget type: ${w.type}');
             return Text('');
         }
       } else if (item['type'] == 'vertical' || item['type'] == 'horizontal') {
         return widget.viewFactory.getLayoutWidget(key: UniqueKey(), type: item['type'], children: _renderComponents(item['items']));
       } else {
-        print('Unknown item type: ${item['type']}');
-        _triggerFallback(_loginContext.state.hostedUrl!);
+        _triggerFallback(_loginContext.state.hostedUrl!, 'Unknown item type: ${item['type']}');
         return Text('');
       }
     }).toList();
@@ -257,12 +265,12 @@ class _LoginRendererState extends State<LoginRenderer> {
       throw Exception('No fallback uri available');
     }
 
-    widget.onFallback?.call(e.uri ?? Uri.parse(_loginContext.state.hostedUrl!));
+    widget.onFallback?.call(e.uri ?? Uri.parse(_loginContext.state.hostedUrl!), e.toString());
   }
 
   void _onError(dynamic e, dynamic stackTrace) {
     if (_loginContext.state.hostedUrl != null && widget.onFallback != null) {
-      widget.onFallback?.call(Uri.parse(_loginContext.state.hostedUrl!));
+      widget.onFallback?.call(Uri.parse(_loginContext.state.hostedUrl!), e.toString());
     } else {
       widget.onError?.call(e, stackTrace);
     }
