@@ -204,8 +204,15 @@ class _LoginRendererState extends State<LoginRenderer> {
   List<Widget> _renderComponents(List<dynamic> items) {
     return items.map<Widget>((item) {
       if (item['type'] == 'widget') {
-        final f = _loginContext.state.forms?.firstWhere((form) => form.id == item['formId']);
-        final w = f?.widgets.firstWhere((widget) => widget.id == item['widgetId']) as BaseWidgetModel?;
+        FormWidgetModel? f;
+        BaseWidgetModel? w;
+
+        try {
+          f = _loginContext.state.forms?.firstWhere((form) => form.id == item['formId']);
+          w = f?.widgets.firstWhere((widget) => widget.id == item['widgetId']) as BaseWidgetModel?;
+        } catch (e) {
+          // Do nothing
+        }
 
         if (f == null || w == null) {
           _triggerFallback(_loginContext.state.hostedUrl!, 'Form or widget not found');
