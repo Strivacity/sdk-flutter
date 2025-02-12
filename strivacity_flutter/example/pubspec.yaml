@@ -13,7 +13,7 @@ dependencies:
     path: ../
   cupertino_icons: ^1.0.8
   flutter_keychain: ^2.5.0
-  fluttertoast: ^8.2.10
+  fluttertoast: ^8.2.12
   webview_flutter: ^4.10.0
   flutter_html: ^3.0.0-beta.2
   url_launcher: ^6.3.1
