@@ -56,7 +56,7 @@ class _DateWidgetState extends State<DateWidget> {
       }
     });
 
-    if(widget.config.validator!.required) {
+    if (widget.config.validator!.required) {
       modifiedLabel = widget.config.label;
     } else {
       modifiedLabel = '${widget.config.label} (Optional)';
@@ -136,39 +136,80 @@ class _DateWidgetState extends State<DateWidget> {
     if (widget.config.render.type == 'native') {
       return Container(
         margin: EdgeInsets.only(top: Styles.paddingLarge),
-        child: GestureDetector(
-          onTap: () async {
-            if (disabled) return;
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(1900),
-              lastDate: DateTime(2100),
-            );
-            if (pickedDate != null) {
-              String formattedDate = pickedDate.toLocal().toString().split(' ')[0];
-              controller.text = formattedDate;
-              onChanged(formattedDate);
-            }
-          },
-          child: AbsorbPointer(
-            child: TextFormField(
-              controller: controller,
-              focusNode: focusNode,
-              enabled: !disabled,
-              onChanged: (value) => onChanged(value),
-              onFieldSubmitted: (value) => onSubmitted(value),
-              style: Styles.setInputTextStyle(),
-              decoration: Styles.setInputDecoration(
-                InputDecoration(
+        child: Stack(
+          alignment: Alignment.centerRight,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                if (disabled) return;
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime(2100),
+                );
+                if (pickedDate != null) {
+                  String formattedDate =
+                      pickedDate.toLocal().toString().split(' ')[0];
+                  controller.text = formattedDate;
+                  onChanged(formattedDate);
+                }
+              },
+              child: AbsorbPointer(
+                child: TextFormField(
+                  controller: controller,
+                  focusNode: focusNode,
                   enabled: !disabled,
-                  labelText: modifiedLabel,
-                  hintText: widget.config.placeholder,
-                  errorText: errorMessage,
+                  onChanged: (value)  => onChanged(value),
+                  onFieldSubmitted: (value) => onSubmitted(value),
+                  style: Styles.setInputTextStyle(),
+                  decoration: Styles.setInputDecoration(
+                    InputDecoration(
+                      enabled: !disabled,
+                      labelText: modifiedLabel,
+                      hintText: widget.config.placeholder,
+                      errorText: errorMessage,
+                      contentPadding: EdgeInsets.only(left: 12, right: 50),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+
+            if (controller.text.isNotEmpty)
+              Positioned(
+                right: 40, 
+                child: GestureDetector(
+                  onTap: () {
+                    controller.clear();
+                    onChanged(""); 
+                  },
+                  child: Icon(Icons.clear, color: Colors.grey),
+                ),
+              ),
+
+            Positioned(
+              right: 8,
+              child: GestureDetector(
+                onTap: () async {
+                  if (disabled) return;
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) {
+                    String formattedDate =
+                        pickedDate.toLocal().toString().split(' ')[0];
+                    controller.text = formattedDate;
+                    onChanged(formattedDate);
+                  }
+                },
+                child: Icon(Icons.calendar_today),
+              ),
+            ),
+          ],
         ),
       );
     } else {
