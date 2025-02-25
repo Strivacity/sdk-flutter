@@ -1,3 +1,9 @@
+## 1.2.0 (2025-02-25)
+
+### Features
+
+- add clear button and calendar icon to date widget
+
 ## 1.1.1 (2025-01-29)
 
 ### Chores

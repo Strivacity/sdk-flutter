@@ -1,6 +1,6 @@
 name: strivacity_flutter
 description: "Strivacity Flutter SDK"
-version: 1.1.1
+version: 1.2.0
 homepage: https://github.com/Strivacity/sdk-flutter
 
 environment:
@@ -13,8 +13,8 @@ dependencies:
   strivacity_flutter_platform_interface: ^1.0.0
   crypto: ^3.0.6
   cookie_jar: ^4.0.8
-  dio: ^5.7.0
-  dio_cookie_manager: ^3.1.1
+  dio: ^5.8.0
+  dio_cookie_manager: ^3.2.0
   path_provider: ^2.1.5
 
 dependency_overrides:
