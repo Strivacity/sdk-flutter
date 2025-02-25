@@ -1,24 +1,26 @@
-import 'package:flutter_keychain/flutter_keychain.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
 
 class KeychainStorage extends SDKStorage {
+  final storage = FlutterSecureStorage();
+
   @override
   Future<void> clear() {
-    return FlutterKeychain.clear();
+    return storage.deleteAll();
   }
 
   @override
   Future<String?> get(String key) {
-    return FlutterKeychain.get(key: key);
+    return storage.read(key: key);
   }
 
   @override
   Future<void> put(String key, String value) {
-    return FlutterKeychain.put(key: key, value: value);
+    return storage.write(key: key, value: value);
   }
 
   @override
   Future<void> remove(String key) {
-    return FlutterKeychain.remove(key: key);
+    return storage.delete(key: key);
   }
 }

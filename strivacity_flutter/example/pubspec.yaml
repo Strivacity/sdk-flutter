@@ -13,7 +13,7 @@ dependencies:
   strivacity_flutter:
     path: ../
   cupertino_icons: ^1.0.8
-  flutter_keychain: ^2.5.0
+  flutter_secure_storage: ^9.2.4
   fluttertoast: ^8.2.10
   webview_flutter: ^4.10.0
   flutter_html: ^3.0.0-beta.2
