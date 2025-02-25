@@ -61,18 +61,16 @@ jobs:
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
       - name: Install dependencies
-        run: |
-          cd strivacity_flutter/example
-          flutter pub get
+        working-directory: strivacity_flutter/example
+        run: flutter pub get
 
       - name: Add example/.env
         working-directory: strivacity_flutter
         run: cp example/.env.example example/.env
 
       - name: Build
-        run: |
-          cd strivacity_flutter/example
-          flutter build apk
+        working-directory: strivacity_flutter/example
+        run: flutter build apk
 
   build_example_ios_stable:
     name: Build iOS example app
@@ -88,18 +86,16 @@ jobs:
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
       - name: Install dependencies
-        run: |
-          cd strivacity_flutter/example
-          flutter pub get
+        working-directory: strivacity_flutter/example
+        run: flutter pub get
 
       - name: Add example/.env
         working-directory: strivacity_flutter
         run: cp example/.env.example example/.env
 
       - name: Build
-        run: |
-          cd strivacity_flutter/example
-          flutter build ipa --no-codesign
+        working-directory: strivacity_flutter/example
+        run: flutter build ipa --no-codesign
 
   test:
     name: Run all unit tests
@@ -115,6 +111,5 @@ jobs:
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
 
       - name: Test
-        run: |
-          cd strivacity_flutter
-          flutter test
+        working-directory: strivacity_flutter
+        run: flutter test
