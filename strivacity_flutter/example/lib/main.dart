@@ -10,6 +10,7 @@ import 'package:strivacity_flutter/strivacity_flutter.dart';
 import 'styles.dart';
 import 'storage.dart';
 import 'pages/init.dart';
+import 'pages/entry.dart';
 import 'pages/home.dart';
 import 'pages/profile.dart';
 import 'pages/login.dart';
@@ -66,7 +67,9 @@ class _MyAppState extends State<MyApp> {
         _nav.currentState!.popUntil((r) => r.isFirst);
 
         if (uri.queryParameters['session_id'] != null) {
-          _nav.currentState!.pushReplacementNamed('/login', arguments: {'session_id': uri.queryParameters['session_id']});
+          _nav.currentState!.pushReplacementNamed('/login', arguments: uri.queryParameters);
+        } else if (uri.queryParameters['challenge'] != null) {
+          _nav.currentState!.pushReplacementNamed('/entry', arguments: uri.queryParameters);
         } else {
           try {
             await sdk.tokenExchange(uri.queryParameters);
@@ -114,6 +117,7 @@ class _MyAppState extends State<MyApp> {
       routes: {
         '/init': (context) => InitPage(sdk: sdk),
         '/home': (context) => HomePage(),
+        '/entry': (context) => EntryPage(sdk: sdk),
         '/profile': (context) => ProfilePage(sdk: sdk),
         '/login': (context) => LoginPage(sdk: sdk),
         '/login-fallback': (context) => LoginFallbackPage(sdk: sdk),
