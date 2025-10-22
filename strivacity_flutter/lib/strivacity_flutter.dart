@@ -27,6 +27,7 @@ export 'package:strivacity_flutter_platform_interface/strivacity_flutter_platfor
         MultiSelectWidgetModel,
         StaticWidgetModel,
         SubmitWidgetModel,
+        CloseWidgetModel,
         BaseWidgetValidator,
         DateWidgetValidator,
         InputWidgetValidator,

@@ -32,6 +32,11 @@ class MethodChannelStrivacityFlutter extends StrivacityFlutterPlatform {
   }
 
   @override
+  Future<void> entry([Map<String, String> params = const {}]) async {
+    await _channel.invokeMethod<void>('entry');
+  }
+
+  @override
   Future<void> tokenExchange([Map<String, String> params = const {}]) async {
     await _channel.invokeMethod<void>('exchangeToken', [params]);
   }

@@ -67,6 +67,10 @@ class _LoginPageState extends State<LoginPage> {
     Navigator.of(context).pushReplacementNamed('/login-fallback', arguments: {'url': uri.toString()});
   }
 
+  void _onClose(BuildContext context) {
+    Navigator.of(context).pushReplacementNamed('/home');
+  }
+
   _onGlobalMessage(String msg) {
     Fluttertoast.showToast(
       msg: msg,
@@ -95,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
             onLogin: (_) => _onLogin(context),
             onError: (e, stackTrace) => _onError(context, e, stackTrace),
             onFallback: (uri, errorMessage) => _onFallback(context, uri, errorMessage),
+            onClose: () => _onClose(context),
             onGlobalMessage: _onGlobalMessage,
           ),
         ),

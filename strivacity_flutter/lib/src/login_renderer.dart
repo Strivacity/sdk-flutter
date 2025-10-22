@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
 
+void noop() {}
+
 /// Represents the context for the login process.
 class LoginContext {
   /// Indicates whether a form submission is in progress.
@@ -25,10 +27,13 @@ class LoginContext {
   /// A function to trigger the fallback process with an optional hosted URL.
   void Function([String? hostedUrl]) triggerFallback;
 
+  /// A function to trigger the closing of the login flow.
+  void Function() triggerClose = () {};
+
   /// Creates a new instance of [LoginContext].
   ///
   /// The [submitForm] and [triggerFallback] parameters are required.
-  LoginContext({required this.submitForm, required this.triggerFallback});
+  LoginContext({required this.submitForm, required this.triggerFallback, this.triggerClose = noop});
 
   /// Sets the form state for the given [formId] and [widgetId] with the provided [value].
   void setFormState(String formId, String widgetId, dynamic value) {
@@ -68,6 +73,9 @@ class LoginRenderer extends StatefulWidget {
   /// Callback function to be called when a fallback is triggered.
   final FutureOr<void> Function(Uri uri, String? errorMessage)? onFallback;
 
+  /// Callback function to be called when the login flow is closed.
+  final FutureOr<void> Function()? onClose;
+
   /// Callback function to be called for global messages.
   final FutureOr<void> Function(String text)? onGlobalMessage;
 
@@ -81,6 +89,7 @@ class LoginRenderer extends StatefulWidget {
     this.onLogin,
     this.onError,
     this.onFallback,
+    this.onClose,
     this.onGlobalMessage,
     required this.sdk,
     required this.viewFactory,
@@ -100,7 +109,7 @@ class _LoginRendererState extends State<LoginRenderer> {
     super.initState();
 
     _loginHandler = widget.sdk.login(widget.params);
-    _loginContext = LoginContext(submitForm: _submitForm, triggerFallback: _triggerFallback);
+    _loginContext = LoginContext(submitForm: _submitForm, triggerFallback: _triggerFallback, triggerClose: _triggerClose);
 
     _init();
   }
@@ -141,6 +150,13 @@ class _LoginRendererState extends State<LoginRenderer> {
     } catch (e, stackTrace) {
       _onError(e, stackTrace);
     }
+  }
+
+  _clear() {
+    _loginContext.state = LoginFlowState();
+    _loginContext.formContexts = {};
+    _loginContext.messageContexts = {};
+    _initialized = false;
   }
 
   Future<void> _submitForm(String formId) async {
@@ -201,6 +217,11 @@ class _LoginRendererState extends State<LoginRenderer> {
     widget.onFallback?.call(Uri.parse(hostedUrl), message);
   }
 
+  void _triggerClose() {
+    _clear();
+    widget.onClose?.call();
+  }
+
   List<Widget> _renderComponents(List<dynamic> items) {
     return items.map<Widget>((item) {
       if (item['type'] == 'widget') {
@@ -242,6 +263,8 @@ class _LoginRendererState extends State<LoginRenderer> {
             return widget.viewFactory.getSelectWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as SelectWidgetModel);
           case 'submit':
             return widget.viewFactory.getSubmitWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as SubmitWidgetModel);
+          case 'close':
+            return widget.viewFactory.getCloseWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as CloseWidgetModel);
           case 'static':
             return widget.viewFactory.getStaticWidget(key: Key('${f.id}|${w.id}'), config: w as StaticWidgetModel);
           default:

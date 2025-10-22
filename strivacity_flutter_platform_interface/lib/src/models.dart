@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+int _hexToColor(String hex) {
+  hex = hex.replaceFirst('#', '');
+  if (hex.length == 6) {
+    hex = 'FF$hex';
+  }
+  return int.parse(hex, radix: 16);
+}
+
 class BrandingData {
   final String? logoUrl;
   final String? brandName;
@@ -373,6 +381,25 @@ class SubmitWidgetModel extends BaseWidgetModel {
   }
 }
 
+class CloseWidgetModel extends BaseWidgetModel {
+  final String? label;
+  final CloseWidgetRender render;
+
+  CloseWidgetModel({
+    required super.id,
+    required this.label,
+    required this.render,
+  }) : super(type: 'close');
+
+  factory CloseWidgetModel.fromJson(Map<String, dynamic> json) {
+    return CloseWidgetModel(
+      id: json['id'],
+      label: json['label'],
+      render: CloseWidgetRender.fromJson(json['render']),
+    );
+  }
+}
+
 class FormWidgetModel extends BaseWidgetModel {
   final List<dynamic> widgets;
 
@@ -410,6 +437,8 @@ class FormWidgetModel extends BaseWidgetModel {
         return StaticWidgetModel.fromJson(json);
       case 'submit':
         return SubmitWidgetModel.fromJson(json);
+      case 'close':
+        return CloseWidgetModel.fromJson(json);
       default:
         throw Exception('Unknown widget type: ${json['type']}');
     }
@@ -441,14 +470,6 @@ class SubmitWidgetRender {
         bgColor: json['bgColor'] != null ? Color(_hexToColor(json['bgColor'])) : null,
         hint: json['hint'] != null ? SubmitWidgetHint.fromJson(json['hint']) : null);
   }
-
-  static int _hexToColor(String hex) {
-    hex = hex.replaceFirst('#', '');
-    if (hex.length == 6) {
-      hex = 'FF$hex';
-    }
-    return int.parse(hex, radix: 16);
-  }
 }
 
 class SubmitWidgetHint {
@@ -459,6 +480,34 @@ class SubmitWidgetHint {
 
   factory SubmitWidgetHint.fromJson(Map<String, dynamic> json) {
     return SubmitWidgetHint(icon: json['icon'], variant: json['variant']);
+  }
+}
+
+class CloseWidgetRender {
+  final String type;
+  final Color? textColor;
+  final Color? bgColor;
+  final CloseWidgetHint? hint;
+
+  CloseWidgetRender({required this.type, required this.textColor, required this.bgColor, required this.hint});
+
+  factory CloseWidgetRender.fromJson(Map<String, dynamic> json) {
+    return CloseWidgetRender(
+        type: json['type'],
+        textColor: json['textColor'] != null ? Color(_hexToColor(json['textColor'])) : null,
+        bgColor: json['bgColor'] != null ? Color(_hexToColor(json['bgColor'])) : null,
+        hint: json['hint'] != null ? CloseWidgetHint.fromJson(json['hint']) : null);
+  }
+}
+
+class CloseWidgetHint {
+  final String? icon;
+  final String? variant;
+
+  CloseWidgetHint({required this.icon, required this.variant});
+
+  factory CloseWidgetHint.fromJson(Map<String, dynamic> json) {
+    return CloseWidgetHint(icon: json['icon'], variant: json['variant']);
   }
 }
 
