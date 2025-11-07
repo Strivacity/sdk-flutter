@@ -431,6 +431,14 @@ class FormWidgetModel extends BaseWidgetModel {
         return SubmitWidgetModel.fromJson(json);
       case 'close':
         return CloseWidgetModel.fromJson(json);
+      case 'passkeyLogin':
+        return PasskeyLoginWidgetModel.fromJson(json);
+      case 'passkeyEnroll':
+        return PasskeyEnrollWidgetModel.fromJson(json);
+      case 'webauthnLogin':
+        return WebauthnLoginWidgetModel.fromJson(json);
+      case 'webauthnEnroll':
+        return WebauthnEnrollWidgetModel.fromJson(json);
       default:
         throw Exception('Unknown widget type: ${json['type']}');
     }
@@ -728,5 +736,139 @@ class LoginFlowState {
       layout: other.layout ?? layout,
       messages: other.messages ?? {},
     );
+  }
+}
+
+class PasskeyLoginWidgetModel extends BaseWidgetModel {
+  final String? label;
+  final ButtonWidgetRender render;
+  final Map<String, dynamic> assertionOptions;
+
+  PasskeyLoginWidgetModel({
+    required super.id,
+    this.label,
+    required this.render,
+    required this.assertionOptions,
+  }) : super(type: 'passkeyLogin');
+
+  factory PasskeyLoginWidgetModel.fromJson(Map<String, dynamic> json) {
+    return PasskeyLoginWidgetModel(
+      id: json['id'],
+      label: json['label'],
+      render: ButtonWidgetRender.fromJson(json['render']),
+      assertionOptions: json['assertionOptions'],
+    );
+  }
+}
+
+class PasskeyEnrollWidgetModel extends BaseWidgetModel {
+  final String? label;
+  final ButtonWidgetRender render;
+  final Map<String, dynamic> enrollOptions;
+
+  PasskeyEnrollWidgetModel({
+    required super.id,
+    this.label,
+    required this.render,
+    required this.enrollOptions,
+  }) : super(type: 'passkeyEnroll');
+
+  factory PasskeyEnrollWidgetModel.fromJson(Map<String, dynamic> json) {
+    return PasskeyEnrollWidgetModel(
+      id: json['id'],
+      label: json['label'],
+      render: ButtonWidgetRender.fromJson(json['render']),
+      enrollOptions: json['enrollOptions'],
+    );
+  }
+}
+
+class WebauthnLoginWidgetModel extends BaseWidgetModel {
+  final String? label;
+  final String authenticatorType;
+  final ButtonWidgetRender render;
+  final Map<String, dynamic> assertionOptions;
+
+  WebauthnLoginWidgetModel({
+    required super.id,
+    this.label,
+    required this.authenticatorType,
+    required this.render,
+    required this.assertionOptions,
+  }) : super(type: 'webauthnLogin');
+
+  factory WebauthnLoginWidgetModel.fromJson(Map<String, dynamic> json) {
+    return WebauthnLoginWidgetModel(
+      id: json['id'],
+      label: json['label'],
+      authenticatorType: json['authenticatorType'],
+      render: ButtonWidgetRender.fromJson(json['render']),
+      assertionOptions: json['assertionOptions'],
+    );
+  }
+}
+
+class WebauthnEnrollWidgetModel extends BaseWidgetModel {
+  final String? label;
+  final String authenticatorType;
+  final ButtonWidgetRender render;
+  final Map<String, dynamic> enrollOptions;
+
+  WebauthnEnrollWidgetModel({
+    required super.id,
+    this.label,
+    required this.authenticatorType,
+    required this.render,
+    required this.enrollOptions,
+  }) : super(type: 'webauthnEnroll');
+
+  factory WebauthnEnrollWidgetModel.fromJson(Map<String, dynamic> json) {
+    return WebauthnEnrollWidgetModel(
+      id: json['id'],
+      label: json['label'],
+      authenticatorType: json['authenticatorType'],
+      render: ButtonWidgetRender.fromJson(json['render']),
+      enrollOptions: json['enrollOptions'],
+    );
+  }
+}
+
+class ButtonWidgetRender {
+  final String type;
+  final ButtonWidgetHint? hint;
+  final ButtonWidgetNotification? notification;
+
+  ButtonWidgetRender({
+    required this.type,
+    this.hint,
+    this.notification,
+  });
+
+  factory ButtonWidgetRender.fromJson(Map<String, dynamic> json) {
+    return ButtonWidgetRender(
+      type: json['type'],
+      hint: json['hint'] != null ? ButtonWidgetHint.fromJson(json['hint']) : null,
+      notification: json['notification'] != null ? ButtonWidgetNotification.fromJson(json['notification']) : null,
+    );
+  }
+}
+
+class ButtonWidgetHint {
+  final String? variant;
+
+  ButtonWidgetHint({this.variant});
+
+  factory ButtonWidgetHint.fromJson(Map<String, dynamic> json) {
+    return ButtonWidgetHint(variant: json['variant']);
+  }
+}
+
+class ButtonWidgetNotification {
+  final String? cancelled;
+
+  ButtonWidgetNotification({this.cancelled});
+
+  factory ButtonWidgetNotification.fromJson(Map<String, dynamic> json) {
+    return ButtonWidgetNotification(cancelled: json['cancelled']);
   }
 }

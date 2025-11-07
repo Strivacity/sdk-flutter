@@ -13,6 +13,10 @@ import 'widgets/select_widget.dart';
 import 'widgets/static_widget.dart';
 import 'widgets/submit_widget.dart';
 import 'widgets/close_widget.dart';
+import 'widgets/passkey_login_widget.dart';
+import 'widgets/passkey_enroll_widget.dart';
+import 'widgets/webauthn_login_widget.dart';
+import 'widgets/webauthn_enroll_widget.dart';
 import 'widgets/container_widget.dart';
 import 'widgets/loading_widget.dart';
 
@@ -80,6 +84,26 @@ class CustomViewFactory implements ViewFactory {
   @override
   Widget getCloseWidget({required Key key, required String formId, required CloseWidgetModel config, required LoginContext loginContext}) {
     return CloseWidget(key: key, formId: formId, config: config, loginContext: loginContext);
+  }
+
+  @override
+  Widget getPasskeyLoginWidget({required Key key, required String formId, required PasskeyLoginWidgetModel config, required LoginContext loginContext}) {
+    return PasskeyLoginWidget(key: key, formId: formId, config: config, loginContext: loginContext);
+  }
+
+  @override
+  Widget getPasskeyEnrollWidget({required Key key, required String formId, required PasskeyEnrollWidgetModel config, required LoginContext loginContext}) {
+    return PasskeyEnrollWidget(key: key, formId: formId, config: config, loginContext: loginContext);
+  }
+
+  @override
+  Widget getWebauthnLoginWidget({required Key key, required String formId, required WebauthnLoginWidgetModel config, required LoginContext loginContext}) {
+    return WebauthnLoginWidget(key: key, formId: formId, config: config, loginContext: loginContext);
+  }
+
+  @override
+  Widget getWebauthnEnrollWidget({required Key key, required String formId, required WebauthnEnrollWidgetModel config, required LoginContext loginContext}) {
+    return WebauthnEnrollWidget(key: key, formId: formId, config: config, loginContext: loginContext);
   }
 
   @override

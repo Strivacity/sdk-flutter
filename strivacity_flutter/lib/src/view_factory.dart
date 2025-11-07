@@ -43,4 +43,16 @@ abstract class ViewFactory {
 
   /// Returns a close widget with the specified parameters.
   Widget getCloseWidget({required Key key, required String formId, required CloseWidgetModel config, required LoginContext loginContext});
+
+  /// Returns a passkey login widget with the specified parameters.
+  Widget getPasskeyLoginWidget({required Key key, required String formId, required PasskeyLoginWidget config, required LoginContext loginContext});
+
+  /// Returns a passkey enroll widget with the specified parameters.
+  Widget getPasskeyEnrollWidget({required Key key, required String formId, required PasskeyEnrollWidget config, required LoginContext loginContext});
+
+  /// Returns a webauthn login widget with the specified parameters.
+  Widget getWebauthnLoginWidget({required Key key, required String formId, required WebauthnLoginWidget config, required LoginContext loginContext});
+
+  /// Returns a webauthn enroll widget with the specified parameters.
+  Widget getWebauthnEnrollWidget({required Key key, required String formId, required WebauthnEnrollWidget config, required LoginContext loginContext});
 }

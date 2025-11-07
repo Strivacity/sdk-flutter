@@ -255,6 +255,18 @@ class _LoginRendererState extends State<LoginRenderer> {
             return widget.viewFactory.getSubmitWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as SubmitWidgetModel);
           case 'close':
             return widget.viewFactory.getCloseWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as CloseWidgetModel);
+          case 'passkeyLogin':
+            return widget.viewFactory
+                .getPasskeyLoginWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as PasskeyLoginWidgetModel);
+          case 'passkeyEnroll':
+            return widget.viewFactory
+                .getPasskeyEnrollWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as PasskeyEnrollWidgetModel);
+          case 'webauthnLogin':
+            return widget.viewFactory
+                .getWebauthnLoginWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as PasskeyLoginWidgetModel);
+          case 'webauthnEnroll':
+            return widget.viewFactory
+                .getWebauthnEnrollWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as WebauthnEnrollWidgetModel);
           case 'static':
             return widget.viewFactory.getStaticWidget(key: Key('${f.id}|${w.id}'), config: w as StaticWidgetModel);
           default:
