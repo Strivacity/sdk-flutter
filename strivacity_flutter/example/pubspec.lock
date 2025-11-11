@@ -492,6 +492,20 @@ packages:
       relative: true
     source: path
     version: "1.2.0"
+  strivacity_flutter_android:
+    dependency: "direct main"
+    description:
+      path: "../../strivacity_flutter_android"
+      relative: true
+    source: path
+    version: "1.0.0"
+  strivacity_flutter_ios:
+    dependency: "direct main"
+    description:
+      path: "../../strivacity_flutter_ios"
+      relative: true
+    source: path
+    version: "1.0.0"
   strivacity_flutter_platform_interface:
     dependency: "direct overridden"
     description:

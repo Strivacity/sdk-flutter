@@ -28,10 +28,13 @@ class LoginContext {
   /// A function to trigger the closing of the login flow.
   void Function() triggerClose;
 
+  /// A function to trigger global messages.
+  void Function(String text)? onGlobalMessage;
+
   /// Creates a new instance of [LoginContext].
   ///
   /// The [submitForm] and [triggerFallback] parameters are required.
-  LoginContext({required this.submitForm, required this.triggerFallback, required this.triggerClose});
+  LoginContext({required this.submitForm, required this.triggerFallback, required this.triggerClose, this.onGlobalMessage});
 
   /// Sets the form state for the given [formId] and [widgetId] with the provided [value].
   void setFormState(String formId, String widgetId, dynamic value) {
@@ -44,6 +47,11 @@ class LoginContext {
 
   /// Sets the message for the given [formId] and [widgetId] with the provided [value].
   void setMessage(String formId, String widgetId, String? value) {
+    if (formId == 'global') {
+      onGlobalMessage?.call(value ?? '');
+      return;
+    }
+
     messageContexts[formId]![widgetId] = value;
   }
 }
@@ -107,7 +115,12 @@ class _LoginRendererState extends State<LoginRenderer> {
     super.initState();
 
     _loginHandler = widget.sdk.login(widget.params);
-    _loginContext = LoginContext(submitForm: _submitForm, triggerFallback: _triggerFallback, triggerClose: _triggerClose);
+    _loginContext = LoginContext(
+      submitForm: _submitForm,
+      triggerFallback: _triggerFallback,
+      triggerClose: _triggerClose,
+      onGlobalMessage: widget.onGlobalMessage,
+    );
 
     _init();
   }
@@ -263,7 +276,7 @@ class _LoginRendererState extends State<LoginRenderer> {
                 .getPasskeyEnrollWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as PasskeyEnrollWidgetModel);
           case 'webauthnLogin':
             return widget.viewFactory
-                .getWebauthnLoginWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as PasskeyLoginWidgetModel);
+                .getWebauthnLoginWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as WebauthnLoginWidgetModel);
           case 'webauthnEnroll':
             return widget.viewFactory
                 .getWebauthnEnrollWidget(key: Key('${f.id}|${w.id}'), formId: f.id, loginContext: _loginContext, config: w as WebauthnEnrollWidgetModel);

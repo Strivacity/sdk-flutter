@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   strivacity_flutter_platform_interface: ^1.0.0
+  strivacity_flutter_android: ^1.0.0
+  strivacity_flutter_ios: ^1.0.0
   crypto: ^3.0.6
   cookie_jar: ^4.0.8
   dio: ^5.8.0
@@ -20,6 +22,10 @@ dependencies:
 dependency_overrides:
   strivacity_flutter_platform_interface:
     path: ../strivacity_flutter_platform_interface
+  strivacity_flutter_android:
+    path: ../strivacity_flutter_android
+  strivacity_flutter_ios:
+    path: ../strivacity_flutter_ios
 
 dev_dependencies:
   flutter_lints: ^5.0.0

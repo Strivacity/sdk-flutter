@@ -263,6 +263,48 @@ class _LoginPageState extends State<LoginPage> {
 
 The `LoginRenderer` widget is responsible for rendering the login UI using the provided `StrivacitySDK` and `CustomViewFactory`. It also handles various events such as login success, errors, fallback URLs, and global messages.
 
+## Passkey Configuration
+
+To enable passkey support in your Flutter application, you need to configure platform-specific settings for both iOS and Android.
+
+### iOS Configuration
+
+Add the associated domain to your `ios/Runner/Runner.entitlements` file:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>webcredentials:your-cluster-domain?mode=developer</string>
+	</array>
+</dict>
+</plist>
+```
+
+Replace `your-cluster-domain` with your Strivacity cluster domain (e.g., `example.strivacity.com`).
+
+**Note:** Remove the `?mode=developer` parameter when deploying to production.
+
+### Android Configuration
+
+Add the Digital Asset Links intent filter to your `android/app/src/main/AndroidManifest.xml` file inside the `<activity>` tag:
+
+```xml
+<!-- Digital Asset Links for Passkey support -->
+<intent-filter android:autoVerify="true">
+    <action android:name="android.intent.action.VIEW" />
+    <category android:name="android.intent.category.DEFAULT" />
+    <category android:name="android.intent.category.BROWSABLE" />
+    <data android:scheme="https" />
+    <data android:host="your-cluster-domain" />
+</intent-filter>
+```
+
+Replace `your-cluster-domain` with your Strivacity cluster domain (e.g., `example.strivacity.com`).
+
 ## Contributing
 
 Please see our [contributing guide](https://github.com/Strivacity/sdk-flutter/blob/main/strivacity_flutter/CONTRIBUTING.md).
