@@ -43,6 +43,7 @@ class _InputWidgetState extends State<InputWidget> {
 
     if (widget.config.value != null) {
       controller.text = widget.config.value!;
+      widget.loginContext.setFormState(widget.formId, widget.config.id, widget.config.value);
     }
 
     focusNode.addListener(() {

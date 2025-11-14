@@ -43,6 +43,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
 
     if (widget.config.value != null) {
       controller.text = widget.config.value!;
+      widget.loginContext.setFormState(widget.formId, widget.config.id, widget.config.value);
     }
 
     focusNode.addListener(() {
@@ -52,7 +53,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
       }
     });
 
-    if(widget.config.validator!.required) {
+    if (widget.config.validator!.required) {
       modifiedLabel = widget.config.label;
     } else {
       modifiedLabel = '${widget.config.label} (Optional)';

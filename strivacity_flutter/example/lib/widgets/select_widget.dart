@@ -108,55 +108,57 @@ class _SelectWidgetState extends State<SelectWidget> {
               style: TextStyle(fontSize: Styles.textSizeMedium, color: Styles.textColor),
             ),
           ),
-          ...widget.config.options.map<Widget>((option) {
-            if (option is SelectWidgetOptionGroup) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    option.label ?? '',
-                    style: TextStyle(fontSize: Styles.textSizeMedium, color: Styles.textColor),
-                  ),
-                  ...option.options.map<Widget>((subOption) {
-                    return RadioListTile<String>(
-                      value: subOption.value,
-                      groupValue: widget.loginContext.formContexts[widget.formId]?[widget.config.id],
-                      onChanged: disabled ? null : (value) => onChanged(value),
-                      title: Text(
-                        subOption.label ?? '',
-                        style: TextStyle(color: Styles.textColor),
+          RadioGroup<String>(
+            onChanged: disabled ? (_) {} : onChanged,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.config.options.map<Widget>((option) {
+                if (option is SelectWidgetOptionGroup) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        option.label ?? '',
+                        style: TextStyle(fontSize: Styles.textSizeMedium, color: Styles.textColor),
                       ),
-                      contentPadding: EdgeInsets.zero,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      visualDensity: const VisualDensity(
-                        horizontal: VisualDensity.minimumDensity,
-                        vertical: VisualDensity.minimumDensity,
-                      ),
-                      activeColor: Styles.primaryColor,
-                    );
-                  }),
-                ],
-              );
-            } else if (option is SelectWidgetOption) {
-              return RadioListTile<String>(
-                value: option.value,
-                groupValue: widget.loginContext.formContexts[widget.formId]?[widget.config.id],
-                onChanged: disabled ? null : (value) => onChanged(value),
-                title: Text(
-                  option.label ?? '',
-                  style: TextStyle(color: Styles.textColor),
-                ),
-                contentPadding: EdgeInsets.zero,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                visualDensity: const VisualDensity(
-                  horizontal: VisualDensity.minimumDensity,
-                  vertical: VisualDensity.minimumDensity,
-                ),
-                activeColor: Styles.primaryColor,
-              );
-            }
-            return Container();
-          }),
+                      ...option.options.map<Widget>((subOption) {
+                        return RadioListTile<String>(
+                          value: subOption.value,
+                          title: Text(
+                            subOption.label ?? '',
+                            style: TextStyle(color: Styles.textColor),
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: const VisualDensity(
+                            horizontal: VisualDensity.minimumDensity,
+                            vertical: VisualDensity.minimumDensity,
+                          ),
+                          activeColor: Styles.primaryColor,
+                        );
+                      }),
+                    ],
+                  );
+                } else if (option is SelectWidgetOption) {
+                  return RadioListTile<String>(
+                    value: option.value,
+                    title: Text(
+                      option.label ?? '',
+                      style: TextStyle(color: Styles.textColor),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    visualDensity: const VisualDensity(
+                      horizontal: VisualDensity.minimumDensity,
+                      vertical: VisualDensity.minimumDensity,
+                    ),
+                    activeColor: Styles.primaryColor,
+                  );
+                }
+                return Container();
+              }).toList(),
+            ),
+          ),
         ],
       );
     } else {
@@ -167,7 +169,7 @@ class _SelectWidgetState extends State<SelectWidget> {
             Expanded(
               child: DropdownButtonFormField<String>(
                 isExpanded: true,
-                value: dropdownSelectValue,
+                initialValue: dropdownSelectValue,
                 decoration: Styles.setInputDecoration(
                   InputDecoration(
                     labelText: widget.config.label,

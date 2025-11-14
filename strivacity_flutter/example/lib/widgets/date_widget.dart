@@ -47,6 +47,7 @@ class _DateWidgetState extends State<DateWidget> {
 
     if (widget.config.value != null) {
       controller.text = widget.config.value!;
+      widget.loginContext.setFormState(widget.formId, widget.config.id, widget.config.value);
     }
 
     focusNode.addListener(() {
@@ -149,8 +150,7 @@ class _DateWidgetState extends State<DateWidget> {
                   lastDate: DateTime(2100),
                 );
                 if (pickedDate != null) {
-                  String formattedDate =
-                      pickedDate.toLocal().toString().split(' ')[0];
+                  String formattedDate = pickedDate.toLocal().toString().split(' ')[0];
                   controller.text = formattedDate;
                   onChanged(formattedDate);
                 }
@@ -160,7 +160,7 @@ class _DateWidgetState extends State<DateWidget> {
                   controller: controller,
                   focusNode: focusNode,
                   enabled: !disabled,
-                  onChanged: (value)  => onChanged(value),
+                  onChanged: (value) => onChanged(value),
                   onFieldSubmitted: (value) => onSubmitted(value),
                   style: Styles.setInputTextStyle(),
                   decoration: Styles.setInputDecoration(
@@ -175,19 +175,17 @@ class _DateWidgetState extends State<DateWidget> {
                 ),
               ),
             ),
-
             if (controller.text.isNotEmpty)
               Positioned(
-                right: 40, 
+                right: 40,
                 child: GestureDetector(
                   onTap: () {
                     controller.clear();
-                    onChanged(""); 
+                    onChanged("");
                   },
                   child: Icon(Icons.clear, color: Colors.grey),
                 ),
               ),
-
             Positioned(
               right: 8,
               child: GestureDetector(
@@ -200,8 +198,7 @@ class _DateWidgetState extends State<DateWidget> {
                     lastDate: DateTime(2100),
                   );
                   if (pickedDate != null) {
-                    String formattedDate =
-                        pickedDate.toLocal().toString().split(' ')[0];
+                    String formattedDate = pickedDate.toLocal().toString().split(' ')[0];
                     controller.text = formattedDate;
                     onChanged(formattedDate);
                   }
