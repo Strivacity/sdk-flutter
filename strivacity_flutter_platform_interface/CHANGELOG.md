@@ -1,3 +1,10 @@
+## 1.3.0 (2025-11-20)
+
+### Features
+
+- close widget added
+- entry flow handling implemented
+
 ## 1.1.0 (2025-01-29)
 
 ### Features
