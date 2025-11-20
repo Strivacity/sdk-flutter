@@ -45,6 +45,11 @@ abstract class StrivacityFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('revoke() has not been implemented');
   }
 
+  /// Handles the entry process.
+  Future<void> entry([Map<String, String> params = const {}]) {
+    throw UnimplementedError('entry() has not been implemented');
+  }
+
   /// Exchanges a code token for an access token.
   Future<void> tokenExchange([Map<String, String> params = const {}]) {
     throw UnimplementedError('exchangeToken() has not been implemented');

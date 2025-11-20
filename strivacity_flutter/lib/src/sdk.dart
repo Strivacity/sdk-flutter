@@ -177,6 +177,72 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     }
   }
 
+  /// Handles the entry process.
+  @override
+  Future<String> entry([Map<String, String> params = const {}]) async {
+    final entryUri = Uri.parse('${tenantConfiguration.issuer}/provider/flow/entry');
+
+    final queryParams = <String, String>{
+      'client_id': tenantConfiguration.clientId,
+      'redirect_uri': tenantConfiguration.redirectUri.toString(),
+      ...params,
+    };
+
+    final finalUri = entryUri.replace(queryParameters: queryParams);
+
+    try {
+      final response = await _httpClient.followUntil(finalUri.toString(), (HttpResponse httpResponse) {
+        if (!httpResponse.headers.containsKey('location')) {
+          return true;
+        }
+
+        final redirectUri = Uri.parse(httpResponse.headers['location']!.first);
+        return tenantConfiguration.redirectUri.host == redirectUri.host ||
+            (tenantConfiguration.issuer.host == redirectUri.host && redirectUri.path == '/oauth2/error');
+      });
+
+      if (response.responseCode == 400) {
+        String message = 'Entry request failed with status 400';
+
+        final data = jsonDecode(response.body);
+
+        if (data is Map<String, dynamic>) {
+          if (data['error'] != null) {
+            message = '${data['error']}: ${data['error_description'] ?? ''}';
+          } else if (data['errorKey'] != null) {
+            message = data['errorKey'];
+          }
+        }
+
+        throw OIDCError('Entry Error', message);
+      }
+
+      if (response.headers['location'] == null) {
+        throw OIDCError('OIDC Error', response.body);
+      }
+
+      final redirectUri = Uri.parse(response.headers['location']!.first);
+
+      if (!redirectUri.toString().startsWith(tenantConfiguration.redirectUri.toString())) {
+        throw OIDCError('OIDC Error', 'Invalid redirect URI');
+      }
+
+      final sessionId = redirectUri.queryParameters['session_id'];
+
+      if (sessionId == null || sessionId.isEmpty) {
+        throw OIDCError('OIDC Error', 'Session ID not found in entry response');
+      }
+
+      return sessionId;
+    } catch (e) {
+      if (e is OIDCError) {
+        rethrow;
+      }
+
+      throw OIDCError('Entry Error', e.toString());
+    }
+  }
+
   /// Exchanges the authorization code for tokens.
   @override
   Future<void> tokenExchange([Map<String, String> params = const {}]) async {

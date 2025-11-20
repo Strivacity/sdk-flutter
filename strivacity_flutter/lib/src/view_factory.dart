@@ -40,4 +40,7 @@ abstract class ViewFactory {
 
   /// Returns a submit widget with the specified parameters.
   Widget getSubmitWidget({required Key key, required String formId, required SubmitWidgetModel config, required LoginContext loginContext});
+
+  /// Returns a close widget with the specified parameters.
+  Widget getCloseWidget({required Key key, required String formId, required CloseWidgetModel config, required LoginContext loginContext});
 }
