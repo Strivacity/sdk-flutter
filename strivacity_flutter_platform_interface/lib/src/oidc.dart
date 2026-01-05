@@ -30,24 +30,23 @@ class IdTokenClaims {
 }
 
 class OidcParams {
-  String? prompt;
-  String? loginHint;
-  List<String>? acrValues;
-  List<String>? scopes;
+  final String? prompt;
+  final String? loginHint;
+  final List<String>? acrValues;
+  final List<String>? scopes;
 
-  List<String> uiLocales = ['en-US'];
+  final List<String> uiLocales;
 
-  OidcParams({this.prompt, this.loginHint, this.acrValues, this.scopes});
+  final List<String>? audiences;
 
-  Map<String, dynamic> toJson() {
-    return {
-      'prompt': prompt,
-      'login_hint': loginHint,
-      'acr_values': acrValues,
-      'scopes': scopes,
-      'ui_locales': uiLocales,
-    };
-  }
+  const OidcParams({
+    this.prompt,
+    this.loginHint,
+    this.acrValues,
+    this.scopes,
+    this.audiences,
+    this.uiLocales = const ['en-US'],
+  });
 }
 
 class OidcState {
@@ -56,11 +55,18 @@ class OidcState {
   String nonce;
   String codeChallenge;
 
-  OidcState({required this.id, required this.codeVerifier, required this.nonce, required this.codeChallenge});
+  OidcState(
+      {required this.id,
+      required this.codeVerifier,
+      required this.nonce,
+      required this.codeChallenge});
 
   static OidcState fromJSON(Map<String, String> data) {
     return OidcState(
-        id: data['id'] as String, codeVerifier: data['codeVerifier'] as String, nonce: data['nonce'] as String, codeChallenge: data['codeChallenge'] as String);
+        id: data['id'] as String,
+        codeVerifier: data['codeVerifier'] as String,
+        nonce: data['nonce'] as String,
+        codeChallenge: data['codeChallenge'] as String);
   }
 }
 

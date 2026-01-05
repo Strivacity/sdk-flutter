@@ -6,6 +6,14 @@ import 'package:strivacity_flutter/strivacity_flutter.dart';
 
 import '../view_factory.dart';
 
+/// Arguments passed to [LoginPage]
+///
+/// [sessionId] is used by "entry" feature
+/// [optionalOidcParams] during OIDC flow
+///
+/// Either may be set - think of it as a union value.
+typedef LoginPageArguments = ({OidcParams? optionalOidcParams, String? sessionId});
+
 class LoginPage extends StatefulWidget {
   final StrivacitySDK sdk;
 
@@ -16,28 +24,15 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  OidcParams? _params;
-  String? _sessionId;
+  LoginPageArguments? routeArguments;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
-    if (arguments != null && arguments['params'] != null) {
-      final params = arguments['params'] as Map<String, dynamic>;
-      _params = OidcParams(
-        prompt: params['prompt'],
-        loginHint: params['login_hint'],
-        acrValues: params['acr_values']?.cast<String>(),
-        scopes: params['scopes']?.cast<String>(),
-      );
-    }
-
-    if (arguments != null && arguments['session_id'] != null) {
-      _sessionId = arguments['session_id'] as String;
-    }
+    final arguments =
+        ModalRoute.of(context)?.settings.arguments as LoginPageArguments?;
+    routeArguments = arguments;
   }
 
   void _showErrorToast(String msg) {
@@ -94,8 +89,8 @@ class _LoginPageState extends State<LoginPage> {
           child: LoginRenderer(
             sdk: widget.sdk,
             viewFactory: CustomViewFactory(),
-            params: _params,
-            sessionId: _sessionId,
+            params: routeArguments?.optionalOidcParams,
+            sessionId: routeArguments?.sessionId,
             onLogin: (_) => _onLogin(context),
             onError: (e, stackTrace) => _onError(context, e, stackTrace),
             onFallback: (uri, errorMessage) => _onFallback(context, uri, errorMessage),

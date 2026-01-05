@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:strivacity_flutter/src/logging.dart';
+import 'package:meta/meta.dart';
 import 'package:strivacity_flutter_platform_interface/strivacity_flutter_platform_interface.dart';
 
 import 'sdk.dart';
@@ -30,9 +31,9 @@ extension type JsonForm(JSON _) implements JSON {
 
 /// Handles the login process for the Strivacity SDK.
 class LoginHandler {
-  late HttpClient _httpClient;
-  late StrivacitySDK _sdk;
-  late OidcParams _params;
+  final HttpClient _httpClient;
+  final StrivacitySDK _sdk;
+  final OidcParams _params;
   final Logging _logging;
 
   /// internal session ID state
@@ -40,13 +41,11 @@ class LoginHandler {
   /// internal last screen state
   _Screen? _lastScreen;
 
-
-  LoginHandler({required sdk, required params, required httpClient, required Logging logging})
-      : _logging = logging {
-    _sdk = sdk;
-    _params = params;
-    _httpClient = httpClient;
-  }
+  LoginHandler({required StrivacitySDK sdk, required OidcParams params, required HttpClient httpClient, required Logging logging})
+      : _logging = logging,
+        _sdk = sdk,
+        _params = params,
+        _httpClient = httpClient;
 
   /// Starts a new session and returns the session data.
   ///
@@ -59,7 +58,7 @@ class LoginHandler {
     }
 
     _sdk.state = _generateState();
-    var uri = _generateAuthorizationUri(_params);
+    var uri = generateAuthorizationUri();
     uri = uri.replace(queryParameters: {
       ...uri.queryParameters,
       'state': _sdk.state!.id,
@@ -187,7 +186,8 @@ class LoginHandler {
   }
 
   /// Generates the authorization URI based on the provided [params].
-  Uri _generateAuthorizationUri(OidcParams? params) {
+  @visibleForTesting
+  Uri generateAuthorizationUri() {
     final uri = Uri.parse('${_sdk.tenantConfiguration.issuer}/oauth2/auth');
 
     return uri.replace(queryParameters: {
@@ -195,12 +195,16 @@ class LoginHandler {
       'redirect_uri': _sdk.tenantConfiguration.redirectUri.toString(),
       'response_type': 'code',
       'response_mode': 'query',
-      'scope': params?.scopes?.join(' ') ?? '',
+      'scope': {
+        ..._sdk.tenantConfiguration.scopes,
+        ..._params.scopes ?? const []
+      }.join(' '),
       'code_challenge_method': 'S256',
-      'ui_locales': params?.uiLocales != null && params!.uiLocales.isNotEmpty ? params.uiLocales.join(' ') : 'en-US',
-      if (params?.prompt != null && params!.prompt!.isNotEmpty) 'prompt': params.prompt,
-      if (params?.acrValues != null && params!.acrValues!.isNotEmpty) 'acr_values': params.acrValues!.join(' '),
-      if (params?.loginHint != null && params!.loginHint!.isNotEmpty) 'login_hint': params.loginHint,
+      'ui_locales': _params.uiLocales.isNotEmpty ? _params.uiLocales.join(' ') : 'en-US',
+      if (_params.prompt?.trim() case final prompt? when prompt.isNotEmpty) 'prompt': prompt,
+      if (_params.acrValues?.nonBlanks case final acrValues? when acrValues.isNotEmpty) 'acr_values': acrValues.join(' '),
+      if (_params.loginHint?.trim() case final loginHint? when loginHint.isNotEmpty) 'login_hint': loginHint,
+      if (_params.audiences?.nonBlanks case final audiences? when audiences.isNotEmpty) 'audience': audiences.join(' ')
     });
   }
 
@@ -211,4 +215,8 @@ class LoginHandler {
 
     return OidcState(id: Crypto.generateRandomString(16), nonce: Crypto.generateRandomString(16), codeVerifier: codeVerifier, codeChallenge: codeChallenge);
   }
+}
+
+extension on Iterable<String> {
+  Iterable<String> get nonBlanks => where((element) => element.trim().isNotEmpty);
 }
