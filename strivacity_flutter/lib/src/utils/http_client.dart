@@ -1,10 +1,17 @@
-import 'package:flutter/foundation.dart';
+import 'dart:io';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
+import '../logging.dart';
+
 class HttpClient {
+
+  HttpClient({required this.logging});
+
+  final Logging logging;
   final Dio dio = Dio();
   late PersistCookieJar cookieJar;
   bool initialized = false;
@@ -17,24 +24,28 @@ class HttpClient {
     dio.interceptors.add(CookieManager(cookieJar));
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        debugPrint('##### REQUEST #####');
-        debugPrint('URL: [${options.method}] ${options.uri}');
-        debugPrint('HEADERS: [${options.headers}]');
-        debugPrint('DATA: ${options.data}');
+        logging.debug('HTTP ${options.method}: ${options.uri.path}');
         return handler.next(options);
       },
       onResponse: (response, handler) async {
-        debugPrint('##### RESPONSE #####');
-        debugPrint('URL: [${response.requestOptions.method}] ${response.requestOptions.uri}');
-        debugPrint('HEADERS: [${response.headers}]');
-        debugPrint('DATA: ${response.data}');
+        const redirects = {HttpStatus.movedPermanently, HttpStatus.found, HttpStatus.seeOther, HttpStatus.temporaryRedirect, HttpStatus.permanentRedirect};
+        final locationHeader = response.headers.value(HttpHeaders.locationHeader);
+        final shouldLogRedirect = locationHeader != null && redirects.contains(response.statusCode);
+        if (shouldLogRedirect) {
+          final locationUri = Uri.parse(locationHeader);
+          logging.debug('HTTP ${response.requestOptions.uri.path} [${response.statusCode}]: redirecting to ${locationUri.scheme}://${locationUri.authority}${locationUri.path}');
+        } else {
+          logging.debug('HTTP ${response.requestOptions.uri.path} [${response.statusCode}]');
+        }
+
+        final eventId = response.headers.value('X-Event-ID');
+        if (eventId != null) {
+          logging.debug('X-Event-ID: $eventId');
+        }
         return handler.next(response);
       },
       onError: (DioException e, handler) async {
-        debugPrint('##### RESPONSE WITH ERROR [${e.response?.statusCode}] #####');
-        debugPrint('URL: [${e.requestOptions.method}] ${e.requestOptions.uri}');
-        debugPrint('HEADERS: [${e.response?.headers}]');
-        debugPrint('DATA: ${e.response?.data}');
+        logging.debug('HTTP ${e.response?.requestOptions.uri.path} [${e.response?.statusCode}]: ${e.message} ${e.error}');
         return handler.next(e);
       },
     ));
