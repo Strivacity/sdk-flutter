@@ -1,6 +1,6 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:strivacity_flutter/src/logging.dart';
 import 'package:strivacity_flutter_platform_interface/strivacity_flutter_platform_interface.dart';
 
