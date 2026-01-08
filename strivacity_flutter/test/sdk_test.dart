@@ -1,27 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
 
-class MockSDKStorage extends SDKStorage {
-  @override
-  Future<void> clear() {
-    return Future.value();
-  }
+import 'mocks/sdk_storage.dart';
 
-  @override
-  Future<String?> get(String key) {
-    return Future.value(null);
-  }
-
-  @override
-  Future<void> put(String key, String value) {
-    return Future.value();
-  }
-
-  @override
-  Future<void> remove(String key) {
-    return Future.value();
-  }
-}
 
 void main() {
   late StrivacitySDK sdk;

@@ -98,8 +98,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     if(params?.prompt != 'create') {
       _logging.info("Login initiated");
     }
-    params ??= OidcParams();
-    params.scopes ??= tenantConfiguration.scopes;
+    params ??= OidcParams(scopes: tenantConfiguration.scopes);
 
     return LoginHandler(sdk: this, params: params, httpClient: _httpClient, logging: _logging);
   }
@@ -108,8 +107,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
   @override
   LoginHandler register([OidcParams? params]) {
     _logging.info("Registration initiated");
-    params ??= OidcParams();
-    params.prompt = 'create';
+    params ??= OidcParams(prompt: 'create');
 
     return login(params);
   }

@@ -13,15 +13,15 @@ class HttpClient {
 
   final Logging logging;
   final Dio dio = Dio();
-  late PersistCookieJar cookieJar;
+  late final PersistCookieJar _cookieJar;
   bool initialized = false;
 
   Future<void> _init() async {
     if (initialized) return;
 
-    cookieJar = PersistCookieJar(ignoreExpires: false, storage: FileStorage((await getApplicationCacheDirectory()).path));
+    _cookieJar = PersistCookieJar(ignoreExpires: false, storage: FileStorage((await getApplicationCacheDirectory()).path));
     dio.options.headers = {'Content-Type': 'application/json'};
-    dio.interceptors.add(CookieManager(cookieJar));
+    dio.interceptors.add(CookieManager(_cookieJar));
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         logging.debug('HTTP ${options.method}: ${options.uri.path}');

@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:example/pages/login.dart';
 import 'package:flutter/material.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
 
@@ -45,7 +46,10 @@ class _EntryPageState extends State<EntryPage> {
       }
 
       if (sessionId.isNotEmpty) {
-        Navigator.of(context).pushReplacementNamed('/login', arguments: {'session_id': sessionId});
+        final LoginPageArguments args =
+            (optionalOidcParams: null, sessionId: sessionId);
+        Navigator.of(context)
+            .pushReplacementNamed('/login', arguments: args);
       } else {
         Navigator.of(context).pushReplacementNamed('/');
       }
