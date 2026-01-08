@@ -139,12 +139,13 @@ class LoginHandler {
   ///
   /// Throws a [FallbackError] if there is an issue with the form submission.
   Future<Map<String, dynamic>> submitForm([String? formId, Map<String, dynamic>? data]) async {
-    _logging.debug("Submitting form ${formId ?? 'unknown'}");
+    formId = formId != null ? 'form/$formId' : 'init';
+    _logging.debug("Submitting form $formId");
     var body = JsonResponse({});
 
     try {
       final response =
-          await _httpClient.post('${_sdk.tenantConfiguration.issuer}/flow/api/v1/${formId != null ? 'form/$formId' : 'init'}', (RequestOptions options) {
+          await _httpClient.post('${_sdk.tenantConfiguration.issuer}/flow/api/v1/$formId', (RequestOptions options) {
         options.headers = {
           'Authorization': 'Bearer $_sessionId',
           'Content-Type': 'application/json',
@@ -153,7 +154,7 @@ class LoginHandler {
       });
 
       body = JsonResponse(response.body);
-
+      _lastScreen = body.screen;
       if (body['finalizeUrl'] != null) {
         try {
           await finalizeSession(body['finalizeUrl']);
@@ -163,8 +164,6 @@ class LoginHandler {
       } else if (body['hostedUrl'] != null && body['forms'] == null && body['messages'] == null) {
         _logging.warn('Triggering cloud initiated fallback');
         throw FallbackError(Uri.parse(body['hostedUrl']));
-      } else {
-        _lastScreen = body.screen;
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 && e.response?.data != null) {

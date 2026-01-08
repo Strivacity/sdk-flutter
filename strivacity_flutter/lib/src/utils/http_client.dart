@@ -38,7 +38,7 @@ class HttpClient {
           logging.debug('HTTP ${response.requestOptions.uri.path} [${response.statusCode}]');
         }
 
-        final eventId = response.headers.value('X-Event-ID');
+        final eventId = response.headers["X-Event-ID"]?.join(" ");
         if (eventId != null) {
           logging.debug('X-Event-ID: $eventId');
         }
