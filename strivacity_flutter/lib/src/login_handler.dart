@@ -1,19 +1,48 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:strivacity_flutter/src/logging.dart';
 import 'package:strivacity_flutter_platform_interface/strivacity_flutter_platform_interface.dart';
 
 import 'sdk.dart';
 import 'utils/crypto.dart';
 import 'utils/http_client.dart';
 
+/// Screen's value
+typedef _Screen = String;
+
+typedef JSON = Map<String, dynamic>;
+
+extension type JsonResponse(JSON _) implements JSON {
+  bool get hasMessage => this['messages']?.isNotEmpty ?? false;
+  bool get hasScreen => containsKey('screen');
+  bool get isScreenMessageUpdate => !hasScreen && hasMessage;
+
+  String? get screen => this['screen'] as String?;
+
+  Iterable<String> get formIds =>
+      [...this['forms']?.map<String>((form) => JsonForm(form).id) ?? []];
+}
+
+extension type JsonForm(JSON _) implements JSON {
+  String get id => this['id'] as String;
+}
+
 /// Handles the login process for the Strivacity SDK.
 class LoginHandler {
   late HttpClient _httpClient;
   late StrivacitySDK _sdk;
   late OidcParams _params;
-  String? _sessionId;
+  final Logging _logging;
 
-  LoginHandler({required sdk, required params, required httpClient}) {
+  /// internal session ID state
+  String? _sessionId;
+  /// internal last screen state
+  _Screen? _lastScreen;
+
+
+  LoginHandler({required sdk, required params, required httpClient, required Logging logging})
+      : _logging = logging {
     _sdk = sdk;
     _params = params;
     _httpClient = httpClient;
@@ -90,12 +119,14 @@ class LoginHandler {
     });
 
     if (response.headers['location'] == null) {
+      _logging.error('Finalize session failed: No location header in response');
       throw OIDCError('OIDC Error', response.body);
     }
 
     final redirectUri = Uri.parse(response.headers['location']!.first);
 
     if (!redirectUri.toString().startsWith(_sdk.tenantConfiguration.redirectUri.toString())) {
+      _logging.error('Finalize session failed: Invalid redirect URI');
       throw OIDCError('OIDC Error', 'Invalid redirect URI');
     }
 
@@ -108,11 +139,13 @@ class LoginHandler {
   ///
   /// Throws a [FallbackError] if there is an issue with the form submission.
   Future<Map<String, dynamic>> submitForm([String? formId, Map<String, dynamic>? data]) async {
-    Map<String, dynamic> body = {};
+    formId = formId != null ? 'form/$formId' : 'init';
+    _logging.debug("Submitting form $formId");
+    var body = JsonResponse({});
 
     try {
       final response =
-          await _httpClient.post('${_sdk.tenantConfiguration.issuer}/flow/api/v1/${formId != null ? 'form/$formId' : 'init'}', (RequestOptions options) {
+          await _httpClient.post('${_sdk.tenantConfiguration.issuer}/flow/api/v1/$formId', (RequestOptions options) {
         options.headers = {
           'Authorization': 'Bearer $_sessionId',
           'Content-Type': 'application/json',
@@ -120,8 +153,8 @@ class LoginHandler {
         options.data = jsonEncode(data ?? {});
       });
 
-      body = response.body;
-
+      body = JsonResponse(response.body);
+      _lastScreen = body.screen;
       if (body['finalizeUrl'] != null) {
         try {
           await finalizeSession(body['finalizeUrl']);
@@ -129,19 +162,28 @@ class LoginHandler {
           rethrow;
         }
       } else if (body['hostedUrl'] != null && body['forms'] == null && body['messages'] == null) {
+        _logging.warn('Triggering cloud initiated fallback');
         throw FallbackError(Uri.parse(body['hostedUrl']));
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 && e.response?.data != null) {
-        body = e.response!.data;
+        body = JsonResponse(e.response!.data);
       } else if (e.response?.statusCode == 403 || e.response?.data['hostedUrl'] != null) {
+        _logging.warn('Triggering cloud initiated fallback due to error: ${e.message}');
         throw FallbackError(e.response?.data['hostedUrl'] != null ? Uri.parse(e.response!.data['hostedUrl']) : null);
       } else {
         rethrow;
       }
     }
 
+    if(body.isScreenMessageUpdate) {
+      _logging.info('Updating screen: `$_lastScreen` with forms: ${body.formIds}. Has messages');
+    } else if(body.hasScreen) {
+      _logging.info('Displaying screen: `${body.screen}` with forms: ${body.formIds}');
+    }
+
     return body;
+
   }
 
   /// Generates the authorization URI based on the provided [params].

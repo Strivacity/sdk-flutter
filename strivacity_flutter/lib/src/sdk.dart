@@ -4,13 +4,15 @@ import 'package:strivacity_flutter_platform_interface/strivacity_flutter_platfor
 
 import 'login_handler.dart';
 import 'utils/http_client.dart';
+import 'logging.dart';
 
 class StrivacitySDK extends StrivacityFlutterPlatform {
   // ignore: constant_identifier_names
   static const String STORE_KEY = 'Strivacity';
 
-  final HttpClient _httpClient = HttpClient();
+  late final HttpClient _httpClient = HttpClient(logging: _logging);
   final SDKStorage _storage;
+  final Logging _logging;
   bool _initialized = false;
   Future<bool>? _isAuthenticated;
 
@@ -76,12 +78,16 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     required this.tenantConfiguration,
     required SDKStorage storage,
     this.session,
-  }) : _storage = storage {
+    Logging? logging,
+  })  : _storage = storage,
+        _logging = logging ?? const DefaultLogging() {
+    _logging.debug("Loading session from storage");
     _storage.get(STORE_KEY).then((data) {
       if (data != null && session == null) {
+        _logging.debug("Session loaded successfully from storage");
         session = OidcSession.fromJson(jsonDecode(data));
       }
-
+      _logging.info("Session initialized");
       _initialized = true;
     });
   }
@@ -89,15 +95,19 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
   /// Initiates the login process with optional OIDC parameters.
   @override
   LoginHandler login([OidcParams? params]) {
+    if(params?.prompt != 'create') {
+      _logging.info("Login initiated");
+    }
     params ??= OidcParams();
     params.scopes ??= tenantConfiguration.scopes;
 
-    return LoginHandler(sdk: this, params: params, httpClient: _httpClient);
+    return LoginHandler(sdk: this, params: params, httpClient: _httpClient, logging: _logging);
   }
 
   /// Initiates the registration process with optional OIDC parameters.
   @override
   LoginHandler register([OidcParams? params]) {
+    _logging.info("Registration initiated");
     params ??= OidcParams();
     params.prompt = 'create';
 
@@ -107,6 +117,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
   /// Logs out the user and clears the session.
   @override
   Future<void> logout() async {
+    _logging.debug("Logout initiated");
     if (session?.idToken == null) {
       return;
     }
@@ -121,12 +132,15 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     } finally {
       session = null;
       await _storage.remove(STORE_KEY);
+      _logging.debug("Profile removed from storage");
+      _logging.info("User was logged out");
     }
   }
 
   /// Refreshes the access token using the refresh token.
   @override
   Future<void> refresh() async {
+    _logging.info("Refreshing user session");
     if (session?.refreshToken == null) {
       return;
     }
@@ -142,6 +156,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     session = OidcSession.fromOidcResponse(response.body);
 
     await _storage.put(STORE_KEY, jsonEncode(session!.toJson()));
+    _logging.debug("Session saved to storage successfully");
   }
 
   /// Revokes the current session tokens.
@@ -174,6 +189,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     } finally {
       session = null;
       await _storage.remove(STORE_KEY);
+      _logging.debug("Profile removed from storage");
     }
   }
 
@@ -247,15 +263,20 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
   @override
   Future<void> tokenExchange([Map<String, String> params = const {}]) async {
     if (state == null) {
+      _logging.error('Invalid or missing state');
       throw OIDCError('OIDC Error', 'Invalid or missing state');
     }
     if (params['error'] != null) {
+      _logging.error(
+          'OIDC Error: ${params['error']} ${params['error_description']}');
       throw OIDCError(params['error']!, params['error_description']!);
     }
     if (params['code'] == null) {
+      _logging.error('Invalid state');
       throw OIDCError('OIDC Error', 'Invalid state');
     }
     if (params['state'] != state?.id) {
+      _logging.error('Invalid or missing codd');
       throw OIDCError('OIDC Error', 'Invalid or missing code');
     }
 
@@ -271,20 +292,26 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
               }
             });
 
-    session = OidcSession.fromOidcResponse(response.body);
+    final sessionProposal = OidcSession.fromOidcResponse(response.body);
 
-    if (session?.idTokenClaims?.nonce != state!.nonce) {
+    if (sessionProposal.idTokenClaims?.nonce != state!.nonce) {
+      _logging.error('Invalid nonce');
       throw OIDCError('OIDC Error', 'Invalid nonce');
     }
-    if (session?.idTokenClaims?.issuer.scheme != tenantConfiguration.issuer.scheme || session?.idTokenClaims?.issuer.host != tenantConfiguration.issuer.host) {
+    if (sessionProposal.idTokenClaims?.issuer.scheme != tenantConfiguration.issuer.scheme || sessionProposal.idTokenClaims?.issuer.host != tenantConfiguration.issuer.host) {
+      _logging.error('Invalid issuer');
       throw OIDCError('OIDC Error', 'Invalid issuer');
     }
-    if (session?.idTokenClaims?.audience.first != tenantConfiguration.clientId) {
+    if (sessionProposal.idTokenClaims?.audience.first != tenantConfiguration.clientId) {
+      _logging.error('Invalid audience');
       throw OIDCError('OIDC Error', 'Invalid audience');
     }
 
-    state = null;
+    await _storage.put(STORE_KEY, jsonEncode(sessionProposal.toJson()));
+    _logging.debug("Session saved to storage successfully");
 
-    await _storage.put(STORE_KEY, jsonEncode(session!.toJson()));
+    session = sessionProposal;
+    _logging.info("User logged in successfully");
+    state = null;
   }
 }

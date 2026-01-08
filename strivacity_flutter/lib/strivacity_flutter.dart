@@ -40,3 +40,4 @@ export 'src/login_renderer.dart' show LoginRenderer, LoginContext;
 export 'src/sdk.dart' show StrivacitySDK;
 export 'src/view_factory.dart' show ViewFactory;
 export 'src/utils/http_client.dart' show HttpResponse;
+export 'src/logging.dart' show Logging;
