@@ -95,7 +95,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
   /// Initiates the login process with optional OIDC parameters.
   @override
   LoginHandler login([OidcParams? params]) {
-    if(params?.prompt != 'create') {
+    if (params?.prompt != 'create') {
       _logging.info("Login initiated");
     }
     params ??= OidcParams(scopes: tenantConfiguration.scopes);
@@ -265,8 +265,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
       throw OIDCError('OIDC Error', 'Invalid or missing state');
     }
     if (params['error'] != null) {
-      _logging.error(
-          'OIDC Error: ${params['error']} ${params['error_description']}');
+      _logging.error('OIDC Error: ${params['error']} ${params['error_description']}');
       throw OIDCError(params['error']!, params['error_description']!);
     }
     if (params['code'] == null) {

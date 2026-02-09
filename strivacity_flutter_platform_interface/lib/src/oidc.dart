@@ -55,18 +55,11 @@ class OidcState {
   String nonce;
   String codeChallenge;
 
-  OidcState(
-      {required this.id,
-      required this.codeVerifier,
-      required this.nonce,
-      required this.codeChallenge});
+  OidcState({required this.id, required this.codeVerifier, required this.nonce, required this.codeChallenge});
 
   static OidcState fromJSON(Map<String, String> data) {
     return OidcState(
-        id: data['id'] as String,
-        codeVerifier: data['codeVerifier'] as String,
-        nonce: data['nonce'] as String,
-        codeChallenge: data['codeChallenge'] as String);
+        id: data['id'] as String, codeVerifier: data['codeVerifier'] as String, nonce: data['nonce'] as String, codeChallenge: data['codeChallenge'] as String);
   }
 }
 

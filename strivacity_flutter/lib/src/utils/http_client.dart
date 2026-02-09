@@ -8,7 +8,6 @@ import 'package:cookie_jar/cookie_jar.dart';
 import '../logging.dart';
 
 class HttpClient {
-
   HttpClient({required this.logging});
 
   final Logging logging;
@@ -33,7 +32,8 @@ class HttpClient {
         final shouldLogRedirect = locationHeader != null && redirects.contains(response.statusCode);
         if (shouldLogRedirect) {
           final locationUri = Uri.parse(locationHeader);
-          logging.debug('HTTP ${response.requestOptions.uri.path} [${response.statusCode}]: redirecting to ${locationUri.scheme}://${locationUri.authority}${locationUri.path}');
+          logging.debug(
+              'HTTP ${response.requestOptions.uri.path} [${response.statusCode}]: redirecting to ${locationUri.scheme}://${locationUri.authority}${locationUri.path}');
         } else {
           logging.debug('HTTP ${response.requestOptions.uri.path} [${response.statusCode}]');
         }

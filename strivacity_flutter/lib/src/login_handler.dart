@@ -21,8 +21,7 @@ extension type JsonResponse(JSON _) implements JSON {
 
   String? get screen => this['screen'] as String?;
 
-  Iterable<String> get formIds =>
-      [...this['forms']?.map<String>((form) => JsonForm(form).id) ?? []];
+  Iterable<String> get formIds => [...this['forms']?.map<String>((form) => JsonForm(form).id) ?? []];
 }
 
 extension type JsonForm(JSON _) implements JSON {
@@ -38,6 +37,7 @@ class LoginHandler {
 
   /// internal session ID state
   String? _sessionId;
+
   /// internal last screen state
   _Screen? _lastScreen;
 
@@ -143,8 +143,7 @@ class LoginHandler {
     var body = JsonResponse({});
 
     try {
-      final response =
-          await _httpClient.post('${_sdk.tenantConfiguration.issuer}/flow/api/v1/$formId', (RequestOptions options) {
+      final response = await _httpClient.post('${_sdk.tenantConfiguration.issuer}/flow/api/v1/$formId', (RequestOptions options) {
         options.headers = {
           'Authorization': 'Bearer $_sessionId',
           'Content-Type': 'application/json',
@@ -175,14 +174,13 @@ class LoginHandler {
       }
     }
 
-    if(body.isScreenMessageUpdate) {
+    if (body.isScreenMessageUpdate) {
       _logging.info('Updating screen: `$_lastScreen` with forms: ${body.formIds}. Has messages');
-    } else if(body.hasScreen) {
+    } else if (body.hasScreen) {
       _logging.info('Displaying screen: `${body.screen}` with forms: ${body.formIds}');
     }
 
     return body;
-
   }
 
   /// Generates the authorization URI based on the provided [params].
@@ -195,10 +193,7 @@ class LoginHandler {
       'redirect_uri': _sdk.tenantConfiguration.redirectUri.toString(),
       'response_type': 'code',
       'response_mode': 'query',
-      'scope': {
-        ..._sdk.tenantConfiguration.scopes,
-        ..._params.scopes ?? const []
-      }.join(' '),
+      'scope': {..._sdk.tenantConfiguration.scopes, ..._params.scopes ?? const []}.join(' '),
       'code_challenge_method': 'S256',
       'ui_locales': _params.uiLocales.isNotEmpty ? _params.uiLocales.join(' ') : 'en-US',
       if (_params.prompt?.trim() case final prompt? when prompt.isNotEmpty) 'prompt': prompt,
