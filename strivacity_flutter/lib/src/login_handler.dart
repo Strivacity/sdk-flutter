@@ -204,7 +204,8 @@ class LoginHandler {
       if (_params.prompt?.trim() case final prompt? when prompt.isNotEmpty) 'prompt': prompt,
       if (_params.acrValues?.nonBlanks case final acrValues? when acrValues.isNotEmpty) 'acr_values': acrValues.join(' '),
       if (_params.loginHint?.trim() case final loginHint? when loginHint.isNotEmpty) 'login_hint': loginHint,
-      if (_params.audiences?.nonBlanks case final audiences? when audiences.isNotEmpty) 'audience': audiences.join(' ')
+      if (_params.audiences?.nonBlanks case final audiences? when audiences.isNotEmpty) 'audience': audiences.join(' '),
+      if (_params.sdk?.trim() case final sdk? when sdk.isNotEmpty) 'sdk': sdk
     });
   }
 

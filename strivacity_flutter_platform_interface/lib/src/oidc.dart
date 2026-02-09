@@ -32,16 +32,16 @@ class IdTokenClaims {
 class OidcParams {
   final String? prompt;
   final String? loginHint;
+  final String? sdk;
   final List<String>? acrValues;
   final List<String>? scopes;
-
   final List<String> uiLocales;
-
   final List<String>? audiences;
 
   const OidcParams({
     this.prompt,
     this.loginHint,
+    this.sdk,
     this.acrValues,
     this.scopes,
     this.audiences,
