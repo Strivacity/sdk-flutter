@@ -205,15 +205,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     final finalUri = entryUri.replace(queryParameters: queryParams);
 
     try {
-      final response = await _httpClient.followUntil(finalUri.toString(), (HttpResponse httpResponse) {
-        if (!httpResponse.headers.containsKey('location')) {
-          return true;
-        }
-
-        final redirectUri = Uri.parse(httpResponse.headers['location']!.first);
-        return tenantConfiguration.redirectUri.host == redirectUri.host ||
-            (tenantConfiguration.issuer.host == redirectUri.host && redirectUri.path == '/oauth2/error');
-      });
+      final response = await _httpClient.get(finalUri.toString());
 
       if (response.responseCode == 400) {
         String message = 'Entry request failed with status 400';
@@ -231,11 +223,14 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
         throw OIDCError('Entry Error', message);
       }
 
-      if (response.headers['location'] == null) {
-        throw OIDCError('OIDC Error', response.body);
-      }
+      Uri redirectUri;
 
-      final redirectUri = Uri.parse(response.headers['location']!.first);
+      // Try to parse response body as URL first, fall back to realUri
+      try {
+        redirectUri = Uri.parse(response.body.toString());
+      } catch (_) {
+        redirectUri = response.realUri!;
+      }
 
       if (!redirectUri.toString().startsWith(tenantConfiguration.redirectUri.toString())) {
         throw OIDCError('OIDC Error', 'Invalid redirect URI');
@@ -295,7 +290,8 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
       _logging.error('Invalid nonce');
       throw OIDCError('OIDC Error', 'Invalid nonce');
     }
-    if (sessionProposal.idTokenClaims?.issuer.scheme != tenantConfiguration.issuer.scheme || sessionProposal.idTokenClaims?.issuer.host != tenantConfiguration.issuer.host) {
+    if (sessionProposal.idTokenClaims?.issuer.scheme != tenantConfiguration.issuer.scheme ||
+        sessionProposal.idTokenClaims?.issuer.host != tenantConfiguration.issuer.host) {
       _logging.error('Invalid issuer');
       throw OIDCError('OIDC Error', 'Invalid issuer');
     }

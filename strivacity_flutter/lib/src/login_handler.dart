@@ -66,21 +66,16 @@ class LoginHandler {
       'nonce': _sdk.state!.nonce,
     });
 
-    final response = await _httpClient.followUntil(uri.toString(), (HttpResponse httpResponse) {
-      if (!httpResponse.headers.containsKey('location')) {
-        return true;
-      }
+    final response = await _httpClient.get(uri.toString());
 
-      final redirectUri = Uri.parse(httpResponse.headers['location']!.first);
-      return _sdk.tenantConfiguration.redirectUri.host == redirectUri.host ||
-          (_sdk.tenantConfiguration.issuer.host == redirectUri.host && redirectUri.path == 'oauth2/error');
-    });
+    Uri redirectUri;
 
-    if (response.headers['location'] == null) {
-      throw OIDCError('OIDC Error', response.body);
+    // Try to parse response body as URL first, fall back to realUri
+    try {
+      redirectUri = Uri.parse(response.body.toString());
+    } catch (_) {
+      redirectUri = response.realUri!;
     }
-
-    final redirectUri = Uri.parse(response.headers['location']!.first);
 
     if (redirectUri.queryParameters['error'] != null) {
       throw OIDCError(redirectUri.queryParameters['error']!, redirectUri.queryParameters['error_description']!);
@@ -107,22 +102,16 @@ class LoginHandler {
   ///
   /// Throws an [OIDCError] if there is an issue finalizing the session.
   Future<void> finalizeSession(String finalizeUrl) async {
-    final response = await _httpClient.followUntil(finalizeUrl, (HttpResponse httpResponse) {
-      if (!httpResponse.headers.containsKey('location')) {
-        return true;
-      }
+    final response = await _httpClient.get(finalizeUrl);
 
-      final redirectUri = Uri.parse(httpResponse.headers['location']!.first);
-      return _sdk.tenantConfiguration.redirectUri.host == redirectUri.host ||
-          (_sdk.tenantConfiguration.issuer.host == redirectUri.host && redirectUri.path == 'oauth2/error');
-    });
+    Uri redirectUri;
 
-    if (response.headers['location'] == null) {
-      _logging.error('Finalize session failed: No location header in response');
-      throw OIDCError('OIDC Error', response.body);
+    // Try to parse response body as URL first, fall back to realUri
+    try {
+      redirectUri = Uri.parse(response.body.toString());
+    } catch (_) {
+      redirectUri = response.realUri!;
     }
-
-    final redirectUri = Uri.parse(response.headers['location']!.first);
 
     if (!redirectUri.toString().startsWith(_sdk.tenantConfiguration.redirectUri.toString())) {
       _logging.error('Finalize session failed: Invalid redirect URI');

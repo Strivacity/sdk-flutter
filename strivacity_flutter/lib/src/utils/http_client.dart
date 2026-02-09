@@ -67,7 +67,7 @@ class HttpClient {
 
     final response = await dio.fetch(options);
 
-    return HttpResponse(response.data, response.statusCode, response.headers.map);
+    return HttpResponse(response.data, response.statusCode, response.headers.map, response.realUri);
   }
 
   /// Sends a POST request to the specified [path].
@@ -85,7 +85,7 @@ class HttpClient {
 
     final response = await dio.fetch(options);
 
-    return HttpResponse(response.data, response.statusCode, response.headers.map);
+    return HttpResponse(response.data, response.statusCode, response.headers.map, response.realUri);
   }
 
   /// Sends a token request to the specified [path].
@@ -103,7 +103,7 @@ class HttpClient {
 
     final response = await dio.fetch(options);
 
-    return HttpResponse(response.data, response.statusCode, response.headers.map);
+    return HttpResponse(response.data, response.statusCode, response.headers.map, response.realUri);
   }
 
   /// Follows redirects until the specified [predicate] is satisfied.
@@ -139,8 +139,9 @@ class HttpResponse {
   final dynamic body;
   final int? responseCode;
   final Map<String, List<String>> headers;
+  final Uri? realUri;
 
-  HttpResponse(this.body, this.responseCode, this.headers);
+  HttpResponse(this.body, this.responseCode, this.headers, [this.realUri]);
 
   /// Creates an [HttpResponse] from a [Response] stream.
   ///
@@ -151,6 +152,6 @@ class HttpResponse {
     final headers = response.headers.map;
     final responseCode = response.statusCode!;
 
-    return HttpResponse(body, responseCode, headers);
+    return HttpResponse(body, responseCode, headers, response.realUri);
   }
 }
