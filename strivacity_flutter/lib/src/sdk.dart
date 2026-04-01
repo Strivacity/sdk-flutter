@@ -130,7 +130,7 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
 
       String? lastLocationHeader;
 
-      final response = await _httpClient.followUntil(
+      await _httpClient.followUntil(
         logoutRequestUrl,
         (resp) {
           // follow until location header is unset or is custom protocol or logout redirect url
