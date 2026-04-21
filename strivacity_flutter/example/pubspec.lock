@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
+  desktop_webview_window:
+    dependency: transitive
+    description:
+      name: desktop_webview_window
+      sha256: "57cf20d81689d5cbb1adfd0017e96b669398a669d927906073b0e42fc64111c0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.3"
   dio:
     dependency: transitive
     description:
@@ -150,46 +158,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_custom_tabs:
-    dependency: "direct main"
-    description:
-      name: flutter_custom_tabs
-      sha256: "34167bd15fa3479855c011f868e0789c9569c12b64358ca7250accc5a24c3312"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
-  flutter_custom_tabs_android:
-    dependency: transitive
-    description:
-      name: flutter_custom_tabs_android
-      sha256: cf06fde8c002f326dc6cbf69ee3f97c3feead4436229da02d2e2aa39d5a5dbf4
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
-  flutter_custom_tabs_ios:
-    dependency: transitive
-    description:
-      name: flutter_custom_tabs_ios
-      sha256: ef2de533bc45fb84fefc3854bc8b1e43001671c6bc6bc55faa57942eecd3f70a
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
-  flutter_custom_tabs_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_custom_tabs_platform_interface
-      sha256: e18e9b08f92582123bdb84fb6e4c91804b0579700fed6f887d32fd9a1e96a5d5
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
-  flutter_custom_tabs_web:
-    dependency: transitive
-    description:
-      name: flutter_custom_tabs_web
-      sha256: "08ae322b11e1972a233d057542279873d0f9d1d5f8159c2c741457239d9d562c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   flutter_dotenv:
     dependency: "direct main"
     description:
@@ -267,6 +235,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_auth_2:
+    dependency: "direct main"
+    description:
+      name: flutter_web_auth_2
+      sha256: "3c14babeaa066c371f3a743f204dd0d348b7d42ffa6fae7a9847a521aff33696"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
+  flutter_web_auth_2_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_web_auth_2_platform_interface
+      sha256: c63a472c8070998e4e422f6b34a17070e60782ac442107c70000dd1bed645f4d
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -372,10 +356,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
+      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
       url: "https://pub.dev"
     source: hosted
-    version: "1.16.0"
+    version: "1.17.0"
   path:
     dependency: transitive
     description:
@@ -511,10 +495,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"
+      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.6"
+    version: "0.7.7"
   typed_data:
     dependency: transitive
     description:
@@ -659,6 +643,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.11.0"
+  window_to_front:
+    dependency: transitive
+    description:
+      name: window_to_front
+      sha256: "7aef379752b7190c10479e12b5fd7c0b9d92adc96817d9e96c59937929512aee"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.3"
   xdg_directories:
     dependency: transitive
     description:

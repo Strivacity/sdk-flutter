@@ -1,7 +1,7 @@
 import 'package:example/pages/login.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs_lite.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});

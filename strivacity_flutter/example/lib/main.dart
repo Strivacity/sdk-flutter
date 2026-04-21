@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:app_links/app_links.dart';
-import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:strivacity_flutter/strivacity_flutter.dart';
@@ -61,8 +60,6 @@ class _MyAppState extends State<MyApp> {
   Future<void> _watchLinkStream() async {
     sub = appLinks.uriLinkStream.listen((uri) async {
       try {
-        closeCustomTabs();
-
         // Clear the navigation stack
         _nav.currentState!.popUntil((r) => r.isFirst);
 
