@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:strivacity_flutter_platform_interface/strivacity_flutter_platform_interface.dart';
 
@@ -121,10 +122,32 @@ class StrivacitySDK extends StrivacityFlutterPlatform {
     }
 
     try {
-      await _httpClient.get(Uri.parse('${tenantConfiguration.issuer}/oauth2/sessions/logout').replace(queryParameters: {
+      final logoutRequestUrl =
+          Uri.parse('${tenantConfiguration.issuer}/oauth2/sessions/logout').replace(queryParameters: {
         'id_token_hint': session!.idToken,
         'post_logout_redirect_uri': tenantConfiguration.postLogoutUri.toString(),
-      }).toString());
+      }).toString();
+
+      String? lastLocationHeader;
+
+      await _httpClient.followUntil(
+        logoutRequestUrl,
+        (resp) {
+          // follow until location header is unset or is custom protocol or logout redirect url
+          lastLocationHeader = resp.headers[HttpHeaders.locationHeader]?.first;
+          if (lastLocationHeader == null) {
+            return true;
+          }
+          if (!lastLocationHeader!.startsWith("http") && !lastLocationHeader!.startsWith("https")) {
+            return true;
+          }
+          return lastLocationHeader!.startsWith(tenantConfiguration.postLogoutUri.toString());
+        },
+      );
+      if (tenantConfiguration.postLogoutUri.toString().toLowerCase() != lastLocationHeader) {
+        _logging.warn("Logout redirect does not match expected logout URL. "
+            "This is likely a misconfiguration of `TenantConfiguration.postLogoutURI`");
+      }
     } catch (e) {
       // ignored
     } finally {
